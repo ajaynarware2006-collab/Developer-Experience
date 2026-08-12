@@ -13,34 +13,24 @@ def progress_bar(
         else ""
     )
 
+    html = f"""
+<div style="margin: 6px 0 12px;">
+
+<div class="progress-track">
+
+<div
+class="progress-fill"
+style="width: {value}%;">
+</div>
+
+</div>
+
+{"<div style='margin-top: 5px; color: #7B837A; font-size: 10px;'>" + value_text + "</div>" if show_value else ""}
+
+</div>
+"""
+
     st.markdown(
-        f"""
-        <div style="margin: 6px 0 12px;">
-
-            <div class="progress-track">
-
-                <div
-                    class="progress-fill"
-                    style="width: {value}%"
-                ></div>
-
-            </div>
-
-            {
-                f'''
-                <div style="
-                    margin-top: 5px;
-                    color: #7B837A;
-                    font-size: 10px;
-                ">
-                    {value_text}
-                </div>
-                '''
-                if show_value
-                else ""
-            }
-
-        </div>
-        """,
+        html,
         unsafe_allow_html=True,
     )
