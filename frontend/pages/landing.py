@@ -3,32 +3,29 @@ import streamlit as st
 
 def render_landing():
 
-    # ==========================================
+    # ============================================================
     # HERO
-    # ==========================================
+    # ============================================================
 
     st.html(
         """
         <section class="devxp-hero">
 
             <div class="devxp-eyebrow">
-                AI-POWERED DEVELOPER GROWTH PLATFORM
+                ⚡ AI-POWERED DEVELOPER GROWTH PLATFORM
             </div>
 
-
             <h1>
-                Your developer journey.
+                Build your career.
                 <br>
-                <span>Understood.</span>
+                <span>Understand your path.</span>
             </h1>
-
 
             <div class="devxp-hero-description">
 
-                Connect your developer identity, understand
-                where you stand, discover what you should learn
-                next, and build a personalized path toward
-                your career goals.
+                DEV/XP connects your developer identity,
+                understands your current skills, and creates
+                a personalized roadmap for where you want to go.
 
             </div>
 
@@ -37,16 +34,24 @@ def render_landing():
     )
 
 
-    # ==========================================
+    # ============================================================
     # CTA BUTTONS
-    # ==========================================
+    # ============================================================
+
     st.html(
         """
         <div class="devxp-cta-row"></div>
         """
     )
 
-    col1, col2, col3 , col4 = st.columns([1.3, 1, 1, 1.3])
+    col1, col2, col3, col4 = st.columns(
+        [1.4, 1, 1, 1.4]
+    )
+
+
+    # ------------------------------------------------------------
+    # GET STARTED
+    # ------------------------------------------------------------
 
     with col2:
 
@@ -56,9 +61,15 @@ def render_landing():
             use_container_width=True,
             key="landing_get_started",
         ):
+
             st.session_state["page"] = "signup"
+
             st.rerun()
 
+
+    # ------------------------------------------------------------
+    # SIGN IN
+    # ------------------------------------------------------------
 
     with col3:
 
@@ -67,17 +78,67 @@ def render_landing():
             use_container_width=True,
             key="landing_signin",
         ):
+
             st.session_state["page"] = "login"
+
             st.rerun()
 
 
-    # ==========================================
-    # FEATURES
-    # ==========================================
+    # ============================================================
+    # FEATURE INTRO
+    # ============================================================
+
+    st.html(
+        """
+        <div
+            style="
+                text-align:center;
+                margin:100px auto 35px;
+                max-width:650px;
+            "
+        >
+
+            <div
+                style="
+                    color:#12AAB3;
+                    font-size:11px;
+                    font-weight:750;
+                    letter-spacing:2px;
+                    text-transform:uppercase;
+                    margin-bottom:12px;
+                "
+            >
+                ONE PLACE FOR YOUR DEVELOPER JOURNEY
+            </div>
+
+            <div
+                style="
+                    color:#F4F7F5;
+                    font-size:30px;
+                    font-weight:800;
+                    letter-spacing:-1px;
+                "
+            >
+                Understand where you are.
+                <br>
+                Know where to go next.
+            </div>
+
+        </div>
+        """
+    )
+
+
+    # ============================================================
+    # FEATURE CARDS
+    # ============================================================
 
     st.html(
         """
         <section class="devxp-features">
+
+
+            <!-- CARD 1 -->
 
             <article class="devxp-feature">
 
@@ -86,17 +147,21 @@ def render_landing():
                 </div>
 
                 <div class="devxp-feature-title">
-                    Know Your Developer Profile
+                    Your Developer Profile
                 </div>
 
                 <div class="devxp-feature-text">
-                    Connect your GitHub, LeetCode, LinkedIn
-                    and other developer platforms to build
-                    a unified developer profile.
+
+                    Connect GitHub, LeetCode, LinkedIn
+                    and other platforms to create a unified
+                    view of your developer identity.
+
                 </div>
 
             </article>
 
+
+            <!-- CARD 2 -->
 
             <article class="devxp-feature">
 
@@ -105,17 +170,21 @@ def render_landing():
                 </div>
 
                 <div class="devxp-feature-title">
-                    Get Your Personal Roadmap
+                    AI-Powered Roadmap
                 </div>
 
                 <div class="devxp-feature-text">
-                    Tell DEV/XP where you want to go and get
-                    an AI-generated roadmap based on your
-                    current skills and goals.
+
+                    Tell DEV/XP your career goal and let AI
+                    generate a personalized learning path
+                    based on your current skills.
+
                 </div>
 
             </article>
 
+
+            <!-- CARD 3 -->
 
             <article class="devxp-feature">
 
@@ -124,33 +193,37 @@ def render_landing():
                 </div>
 
                 <div class="devxp-feature-title">
-                    Keep Growing
+                    Continuous Growth
                 </div>
 
                 <div class="devxp-feature-text">
-                    Track learning, projects and progress
-                    while an AI assistant helps you decide
-                    what to do next.
+
+                    Track your skills, projects and learning
+                    progress while DEV/XP continuously helps
+                    you decide what to focus on next.
+
                 </div>
 
             </article>
+
 
         </section>
         """
     )
 
 
-    # ==========================================
-    # PLATFORMS
-    # ==========================================
+    # ============================================================
+    # PLATFORM SECTION
+    # ============================================================
 
     st.html(
         """
         <section class="devxp-platform-section">
 
             <div class="devxp-platform-label">
-                Built around your developer identity
+                YOUR DEVELOPER ECOSYSTEM
             </div>
+
 
             <div class="devxp-platform-list">
 
