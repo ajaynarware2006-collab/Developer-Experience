@@ -254,7 +254,7 @@ def render_signup():
 
 
             if st.button(
-                "Sign In",
+                "LOGIN",
                 use_container_width=True,
                 key="signup_login",
             ):

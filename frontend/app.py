@@ -13,6 +13,34 @@ from pages.roadmap import render_roadmap
 # ============================================================
 # PAGE CONFIG
 # ============================================================
+def is_authenticated():
+
+    return st.session_state.get(
+        "is_authenticated",
+        False,
+    )
+
+PROTECTED_PAGES = {
+    "onboarding",
+    "profile",
+    "roadmap",
+    "dashboard",
+}
+
+current_page = st.session_state.get(
+    "page",
+    "landing",
+)
+
+
+if (
+    current_page in PROTECTED_PAGES
+    and not is_authenticated()
+):
+
+    st.session_state["page"] = "login"
+
+    st.rerun()
 
 st.set_page_config(
     page_title="DEV/XP",

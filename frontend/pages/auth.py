@@ -163,7 +163,7 @@ def render_auth(mode):
                 # ----------------------------------------------------
 
                 if st.button(
-                    "Sign In",
+                    "LOGIN",
                     type="primary",
                     use_container_width=True,
                     key="login_submit",

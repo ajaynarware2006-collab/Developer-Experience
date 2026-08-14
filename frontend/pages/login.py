@@ -1,5 +1,6 @@
 import streamlit as st
-
+from services.auth_service import authenticate_user
+from services.session_service import login_user
 
 def render_login():
 
@@ -87,26 +88,41 @@ def render_login():
 
 
             # ----------------------------------------------------
-            # SIGN IN
+            # LOGIN
             # ----------------------------------------------------
 
             if st.button(
-                "Sign In",
+                "LOGIN",
                 type="primary",
                 use_container_width=True,
                 key="login_submit",
             ):
 
-                if not email or not password:
+                try:
 
-                    st.error(
-                        "Please enter your email and password."
+                    user = authenticate_user(
+                        email=email,
+                        password=password,
                     )
 
-                else:
+                    if user is None:
 
-                    st.success(
-                        "Login form submitted successfully."
+                        st.error(
+                            "Invalid email or password."
+                        )
+
+                    else:
+
+                        login_user(user)
+
+                        st.session_state["page"] = "onboarding"
+
+                        st.rerun()
+
+                except Exception:
+
+                    st.error(
+                        "Unable to login right now. Please try again."
                     )
 
 

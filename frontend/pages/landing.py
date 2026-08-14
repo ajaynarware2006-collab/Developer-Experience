@@ -68,15 +68,15 @@ def render_landing():
 
 
     # ------------------------------------------------------------
-    # SIGN IN
+    # LOGIN
     # ------------------------------------------------------------
 
     with col3:
 
         if st.button(
-            "Sign In",
+            "LOGIN",
             use_container_width=True,
-            key="landing_signin",
+            key="landing_login",
         ):
 
             st.session_state["page"] = "login"

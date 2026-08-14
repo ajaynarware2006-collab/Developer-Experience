@@ -13,7 +13,7 @@ def render_navbar():
                 </div>
 
                 <div>
-                    DEV<span>/</span>XP
+                    D<span style="font-size : 17px;">EV</span> X<span style="font-size : 17px;">P</span>
                 </div>
 
             </div>
