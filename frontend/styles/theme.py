@@ -1021,6 +1021,68 @@ def load_theme():
             }
         }
 
+        body {
+            font-size: 20px;
+        }
+
+        p {
+            font-size: 20px;
+        }
+
+        label {
+            font-size: 19px !important;
+        }
+        /* ================================
+        ONBOARDING TYPOGRAPHY
+        ================================ */
+
+        .onboarding-header h1 {
+            font-size: 42px !important;
+            line-height: 1.15 !important;
+            font-weight: 800 !important;
+        }
+
+        .onboarding-header p {
+            font-size: 17px !important;
+            line-height: 1.6 !important;
+        }
+
+        .onboarding-question h2 {
+            font-size: 30px !important;
+            line-height: 1.25 !important;
+            font-weight: 750 !important;
+        }
+
+        .onboarding-question p {
+            font-size: 16px !important;
+            line-height: 1.6 !important;
+        }
+
+        /* Streamlit labels */
+        .stRadio label,
+        .stCheckbox label,
+        .stSelectbox label {
+            font-size: 16px !important;
+        }
+
+        /* Radio / checkbox options */
+        .stRadio div[role="radiogroup"] label,
+        .stCheckbox label {
+            font-size: 16px !important;
+        }
+
+        /* Buttons */
+        .stButton button {
+            font-size: 15px !important;
+            font-weight: 650 !important;
+            min-height: 46px !important;
+        }
+
+        /* Progress text */
+        .onboarding-header + div {
+            font-size: 15px;
+        }
+
         </style>
         """
     )
