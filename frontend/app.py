@@ -9,6 +9,7 @@ from pages.auth import render_auth
 from pages.onboarding import render_onboarding
 from pages.profile import render_profile
 from pages.roadmap import render_roadmap
+from pages.dashboard import render_dashboard
 
 # ============================================================
 # PAGE CONFIG
@@ -83,8 +84,10 @@ pages = {
     "onboarding": render_onboarding,
     "profile": render_profile,
     "roadmap": render_roadmap,
+    "dashboard": render_dashboard,
 }
 
 current_page = st.session_state["page"]
 
 pages[current_page]()
+

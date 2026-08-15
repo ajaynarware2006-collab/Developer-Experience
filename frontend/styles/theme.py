@@ -1083,6 +1083,373 @@ def load_theme():
             font-size: 15px;
         }
 
+        /* ============================================================
+        DEV/XP APPLICATION SHELL
+        ============================================================ */
+
+        .devxp-sidebar {
+            width: 250px;
+            min-height: calc(100vh - 30px);
+
+            padding: 24px 16px;
+
+            background:
+                rgba(15, 25, 27, 0.78);
+
+            border-right:
+                1px solid rgba(255, 255, 255, 0.06);
+
+            backdrop-filter: blur(24px);
+        }
+
+
+        /* BRAND */
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+
+            padding: 8px 10px 28px;
+        }
+
+        .sidebar-logo {
+            width: 38px;
+            height: 38px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 11px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #087B84,
+                    #12AAB3
+                );
+
+            color: #F4F7F5;
+
+            font-size: 18px;
+            font-weight: 850;
+
+            box-shadow:
+                0 0 24px
+                rgba(18, 170, 179, 0.25);
+        }
+
+        .sidebar-brand-name {
+            color: #F4F7F5;
+
+            font-size: 17px;
+            font-weight: 850;
+
+            letter-spacing: 0.5px;
+        }
+
+        .sidebar-brand-subtitle {
+            color: #647A7F;
+
+            font-size: 10px;
+
+            margin-top: 2px;
+        }
+
+
+        /* SECTION LABEL */
+
+        .sidebar-section-label {
+            color: #52686D;
+
+            font-size: 9px;
+            font-weight: 800;
+
+            letter-spacing: 1.6px;
+
+            padding:
+                8px 11px;
+
+            margin-bottom: 5px;
+
+            text-transform: uppercase;
+        }
+
+
+        /* NAV ITEMS */
+
+        .sidebar-nav-item,
+        .sidebar-nav-active {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 12px;
+
+            padding:
+                11px 12px;
+
+            margin:
+                3px 0;
+
+            border-radius: 10px;
+
+            color: #819497;
+
+            font-size: 13px;
+
+            font-weight: 600;
+
+            transition:
+                all 0.18s ease;
+        }
+
+        .sidebar-nav-item:hover {
+
+            color: #DDE8E7;
+
+            background:
+                rgba(255, 255, 255, 0.035);
+        }
+
+        .sidebar-nav-active {
+
+            color: #F4F7F5;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    rgba(18, 170, 179, 0.14),
+                    rgba(18, 170, 179, 0.035)
+                );
+
+            border:
+                1px solid
+                rgba(18, 170, 179, 0.12);
+
+            box-shadow:
+                inset 3px 0 0 #12AAB3;
+        }
+
+        .sidebar-nav-icon {
+
+            width: 20px;
+
+            display: inline-flex;
+
+            align-items: center;
+            justify-content: center;
+
+            color: #71878C;
+
+            font-size: 15px;
+        }
+
+        .sidebar-nav-active .sidebar-nav-icon {
+            color: #12AAB3;
+        }
+
+
+        /* USER */
+
+        .sidebar-user {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+
+            padding:
+                14px 10px;
+
+            margin-top: 25px;
+
+            border-top:
+                1px solid
+                rgba(255,255,255,0.06);
+        }
+
+        .sidebar-avatar {
+
+            width: 34px;
+            height: 34px;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            flex-shrink: 0;
+
+            border-radius: 50%;
+
+            background:
+                rgba(18,170,179,0.12);
+
+            border:
+                1px solid
+                rgba(18,170,179,0.22);
+
+            color: #9EDFE3;
+
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        .sidebar-user-info {
+            min-width: 0;
+        }
+
+        .sidebar-user-name {
+
+            color: #EAF2F1;
+
+            font-size: 12px;
+            font-weight: 700;
+
+            white-space: nowrap;
+
+            overflow: hidden;
+
+            text-overflow: ellipsis;
+        }
+
+        .sidebar-user-email {
+
+            color: #52686D;
+
+            font-size: 10px;
+
+            margin-top: 2px;
+
+            white-space: nowrap;
+
+            overflow: hidden;
+
+            text-overflow: ellipsis;
+        }
+
+
+        /* ============================================================
+        HEADER
+        ============================================================ */
+
+        .devxp-header {
+
+            height: 64px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            padding:
+                0 26px;
+
+            margin-bottom: 25px;
+
+            border-bottom:
+                1px solid
+                rgba(255,255,255,0.055);
+        }
+
+        .header-page-title {
+
+            color: #EAF2F1;
+
+            font-size: 16px;
+
+            font-weight: 700;
+        }
+
+        .header-right {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 22px;
+        }
+
+        .header-status {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 7px;
+
+            color: #71878C;
+
+            font-size: 11px;
+
+            font-weight: 650;
+        }
+
+        .status-dot {
+
+            width: 6px;
+            height: 6px;
+
+            border-radius: 50%;
+
+            background: #9ED33C;
+
+            box-shadow:
+                0 0 10px
+                rgba(158,211,60,0.6);
+        }
+
+        .header-user {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 8px;
+        }
+
+        .header-avatar {
+
+            width: 30px;
+            height: 30px;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 50%;
+
+            background:
+                rgba(18,170,179,0.12);
+
+            border:
+                1px solid
+                rgba(18,170,179,0.2);
+
+            color: #9EDFE3;
+
+            font-size: 11px;
+
+            font-weight: 800;
+        }
+
+        .header-user-name {
+
+            color: #B7C7C8;
+
+            font-size: 12px;
+
+            font-weight: 650;
+        }
+
+        
+
         </style>
         """
     )

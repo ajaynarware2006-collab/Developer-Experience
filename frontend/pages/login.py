@@ -115,7 +115,7 @@ def render_login():
 
                         login_user(user)
 
-                        st.session_state["page"] = "onboarding"
+                        st.session_state["page"] = "dashboard"
 
                         st.rerun()
 

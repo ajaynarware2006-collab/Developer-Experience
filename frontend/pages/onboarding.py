@@ -1,5 +1,7 @@
 import streamlit as st
-
+from repositories.profile_repository import (
+    create_developer_profile
+)
 
 def render_onboarding():
 
@@ -606,7 +608,43 @@ def render_onboarding():
 
                     data["daily_time"] = selected
 
-                    st.session_state["onboarding_complete"] = True
-                    st.session_state["page"] = "profile"
+                    user_id = st.session_state.get(
+                        "user_id"
+                    )
 
-                    st.rerun()
+                    if not user_id:
+
+                        st.error(
+                            "Your session has expired. Please login again."
+                        )
+
+                        st.stop()
+
+
+                    try:
+
+                        profile_id = create_developer_profile(
+                            user_id=user_id,
+                            career_goal=data["career_goal"],
+                            experience_level=data["experience_level"],
+                            experience=data["experience"],
+                            target=data["target"],
+                            timeline=data["timeline"],
+                            daily_time=data["daily_time"],
+                            skills=data["skills"],
+                        )
+
+                        st.session_state["profile_id"] = profile_id
+
+                        st.session_state["onboarding_complete"] = True
+
+                        st.session_state["page"] = "profile"
+
+                        st.rerun()
+
+
+                    except Exception as error:
+
+                        st.error(
+                            f"Unable to save your profile: {error}"
+                        )

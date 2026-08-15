@@ -470,13 +470,13 @@ def render_profile_view(data):
             with col2:
 
                 if st.button(
-                    "Generate My Roadmap ✦",
+                    "Done ✦",
                     type="primary",
                     use_container_width=True,
                     key="generate_roadmap",
                 ):
 
-                    st.session_state["page"] = "roadmap"
+                    st.session_state["page"] = "dashboard"
                     st.rerun()
 
 
