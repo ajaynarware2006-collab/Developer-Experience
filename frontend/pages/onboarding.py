@@ -1,5 +1,5 @@
 import streamlit as st
-from repositories.profile_repository import (
+from backend.repositories.profile_repository import (
     create_developer_profile
 )
 

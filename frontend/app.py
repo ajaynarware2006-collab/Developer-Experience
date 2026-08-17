@@ -1,15 +1,14 @@
 import streamlit as st
 
-from styles.theme import load_theme
-from components.navbar import render_navbar
-from pages.landing import render_landing
-from pages.login import render_login
-from pages.signup import render_signup
-from pages.auth import render_auth
-from pages.onboarding import render_onboarding
-from pages.profile import render_profile
-from pages.roadmap import render_roadmap
-from pages.dashboard import render_dashboard
+from frontend.styles.theme import load_theme
+from frontend.components.navbar import render_navbar
+from frontend.pages.landing import render_landing
+from frontend.pages.login import render_login
+from frontend.pages.signup import render_signup
+from frontend.pages.onboarding import render_onboarding
+from frontend.pages.profile import render_profile
+from frontend.pages.roadmap import render_roadmap
+from frontend.pages.dashboard import render_dashboard
 
 # ============================================================
 # PAGE CONFIG
@@ -49,7 +48,6 @@ st.set_page_config(
     layout="centered",
     initial_sidebar_state="collapsed",
 )
-
 
 # ============================================================
 # THEME

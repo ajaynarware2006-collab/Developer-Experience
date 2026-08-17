@@ -1,5 +1,5 @@
-from database.connection import get_connection
-
+from backend.database.connection import get_connection
+# from sqlalchemy import 
 
 def create_developer_profile(
     user_id: int,
@@ -71,3 +71,5 @@ def create_developer_profile(
     return profile_id
 
 # def get_profile():
+
+

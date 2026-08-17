@@ -1,5 +1,5 @@
 import streamlit as st
-from services.auth_service import register_user
+from frontend.services.auth_service import register_user
 
 def render_signup():
 

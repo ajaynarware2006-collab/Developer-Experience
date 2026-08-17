@@ -1,6 +1,6 @@
 import streamlit as st
 
-from services.roadmap_engine import generate_roadmap
+from backend.services.roadmap_engine import generate_roadmap
 
 
 def render_roadmap():

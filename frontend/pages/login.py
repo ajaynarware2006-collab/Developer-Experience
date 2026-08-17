@@ -1,6 +1,6 @@
 import streamlit as st
-from services.auth_service import authenticate_user
-from services.session_service import login_user
+from frontend.services.auth_service import authenticate_user
+from frontend.services.session_service import login_user
 
 def render_login():
 

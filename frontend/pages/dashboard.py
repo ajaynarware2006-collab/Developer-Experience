@@ -1,8 +1,8 @@
 import streamlit as st
 
-from services.roadmap_engine import generate_roadmap
-from services.session_service import logout_user
-from styles.dashboard_theme import load_dashboard_theme
+from backend.services.roadmap_engine import generate_roadmap
+from frontend.services.session_service import logout_user
+from frontend.styles.dashboard_theme import load_dashboard_theme
 
 
 def render_dashboard():
