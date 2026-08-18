@@ -2,9 +2,18 @@ import streamlit as st
 from backend.repositories.profile_repository import (
     create_profile
 )
-from backend.repositories.profile_repository import create_profile
 
 def render_onboarding():
+
+    user_id = st.session_state.get(
+        "user_id"
+    )
+
+    if not user_id:
+
+        st.session_state["page"] = "login"
+
+        st.rerun()
 
     # ============================================================
     # INITIAL STATE
@@ -635,11 +644,20 @@ def render_onboarding():
                             skills=data["skills"],
                         )
 
-                        st.session_state["profile_id"] = profile.id
+                                        
+                        st.session_state.pop(
+                            "onboarding",
+                            None,
+                        )
 
-                        st.session_state["onboarding_complete"] = True
+                        st.session_state.pop(
+                            "onboarding_step",
+                            None,
+                        )
 
-                        st.session_state["page"] = "profile"
+                        st.session_state[
+                            "page"
+                        ] = "profile"
 
                         st.rerun()
 

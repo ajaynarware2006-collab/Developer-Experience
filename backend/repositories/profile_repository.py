@@ -1,4 +1,5 @@
 from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 
 from backend.database.connection import SessionLocal
 from backend.models.developer_profile import DeveloperProfile
@@ -33,12 +34,16 @@ def create_profile(
 
         for skill in skills:
 
-            profile_skill = ProfileSkill(
-                profile_id=profile.id,
-                skill=skill,
-            )
+            clean_skill = skill.strip()
 
-            db.add(profile_skill)
+            if not clean_skill:
+                continue
+
+            profile.skills.append(
+                ProfileSkill(
+                    skill=clean_skill
+                )
+            )
 
         db.commit()
 
@@ -51,8 +56,77 @@ def get_profile_by_user_id(user_id: int):
 
     with SessionLocal() as db:
 
-        return (
-            db.query(DeveloperProfile)
-            .filter(DeveloperProfile.user_id == user_id)
-            .first()
+        statement = (
+            select(DeveloperProfile)
+            .options(
+                selectinload(
+                    DeveloperProfile.skills
+                )
+            )
+            .where(
+                DeveloperProfile.user_id == user_id
+            )
         )
+
+        return db.scalar(statement)
+
+
+def update_profile(
+    user_id: int,
+    career_goal: str,
+    experience_level: str,
+    experience: str,
+    target: str,
+    timeline: str,
+    daily_time: str,
+    skills: list[str],
+):
+
+    with SessionLocal() as db:
+
+        statement = (
+            select(DeveloperProfile)
+            .options(
+                selectinload(
+                    DeveloperProfile.skills
+                )
+            )
+            .where(
+                DeveloperProfile.user_id == user_id
+            )
+        )
+
+        profile = db.scalar(statement)
+
+        if profile is None:
+            return None
+
+        profile.career_goal = career_goal
+        profile.experience_level = experience_level
+        profile.experience = experience
+        profile.target = target
+        profile.timeline = timeline
+        profile.daily_time = daily_time
+
+        # Remove old skills
+        profile.skills.clear()
+
+        # Add new skills
+        for skill in skills:
+
+            clean_skill = skill.strip()
+
+            if not clean_skill:
+                continue
+
+            profile.skills.append(
+                ProfileSkill(
+                    skill=clean_skill
+                )
+            )
+
+        db.commit()
+
+        db.refresh(profile)
+
+        return profile

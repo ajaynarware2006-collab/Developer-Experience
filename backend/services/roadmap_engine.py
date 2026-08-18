@@ -1,43 +1,24 @@
-from typing import Any
+from backend.models.developer_profile import DeveloperProfile
 
 
-def generate_roadmap(profile: dict[str, Any]) -> dict[str, Any]:
-    """
-    Generate a personalized roadmap from a developer profile.
+def generate_roadmap(
+    profile: DeveloperProfile,
+) -> dict:
 
-    Currently uses a rule-based engine.
-    Later this function will call an LLM service.
-    """
+    career_goal = profile.career_goal
 
-    career_goal = profile.get(
-        "career_goal",
-        "Software Engineer",
-    )
+    level = profile.experience_level
 
-    level = profile.get(
-        "experience_level",
-        "Beginner",
-    )
+    skills = [
+        skill.skill
+        for skill in profile.skills
+    ]
 
-    skills = profile.get(
-        "skills",
-        [],
-    )
+    target = profile.target
 
-    target = profile.get(
-        "target",
-        "Job",
-    )
+    timeline = profile.timeline
 
-    timeline = profile.get(
-        "timeline",
-        "6 months",
-    )
-
-    daily_time = profile.get(
-        "daily_time",
-        "2–4 hours/day",
-    )
+    daily_time = profile.daily_time
 
     # ------------------------------------------------------------
     # Determine roadmap type
@@ -51,6 +32,7 @@ def generate_roadmap(profile: dict[str, Any]) -> dict[str, Any]:
         or "ml" in goal
         or "genai" in goal
     ):
+
         roadmap_type = "ai"
 
     elif (
@@ -60,6 +42,7 @@ def generate_roadmap(profile: dict[str, Any]) -> dict[str, Any]:
         or "frontend" in goal
         or "software" in goal
     ):
+
         roadmap_type = "software"
 
     elif "data" in goal:
@@ -103,28 +86,19 @@ def generate_roadmap(profile: dict[str, Any]) -> dict[str, Any]:
         )
 
     # ------------------------------------------------------------
-    # Return structured roadmap
+    # Return roadmap
     # ------------------------------------------------------------
 
     return {
         "title": f"Roadmap to {career_goal}",
-
         "career_goal": career_goal,
-
         "current_level": level,
-
         "target": target,
-
         "timeline": timeline,
-
         "daily_time": daily_time,
-
         "progress": 0,
-
         "phases": phases,
     }
-
-
 # =================================================================
 # AI / ML ROADMAP
 # =================================================================

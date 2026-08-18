@@ -1,7 +1,11 @@
 import streamlit as st
+
 from frontend.services.auth_service import authenticate_user
 from frontend.services.session_service import login_user
-from backend.repositories.profile_repository import get_profile_by_user_id
+from backend.repositories.profile_repository import (
+    get_profile_by_user_id,
+)
+
 
 def render_login():
 
@@ -17,19 +21,24 @@ def render_login():
             "← Back",
             key="login_back",
         ):
-            st.session_state["page"] = "landing"
-            st.rerun()
 
+            st.session_state["page"] = "landing"
+
+            st.rerun()
 
     # ============================================================
     # AUTH CARD
     # ============================================================
 
-    left, center, right = st.columns([1.2, 2.2, 1.2])
+    left, center, right = st.columns(
+        [1.2, 2.2, 1.2]
+    )
 
     with center:
 
-        with st.container(key="auth-card"):
+        with st.container(
+            key="auth-card"
+        ):
 
             st.html(
                 """
@@ -47,7 +56,6 @@ def render_login():
                 """
             )
 
-
             # ----------------------------------------------------
             # EMAIL
             # ----------------------------------------------------
@@ -57,7 +65,6 @@ def render_login():
                 placeholder="you@example.com",
                 key="login_email",
             )
-
 
             # ----------------------------------------------------
             # PASSWORD
@@ -70,12 +77,13 @@ def render_login():
                 key="login_password",
             )
 
-
             # ----------------------------------------------------
             # FORGOT PASSWORD
             # ----------------------------------------------------
 
-            forgot_col1, forgot_col2 = st.columns([3, 1])
+            forgot_col1, forgot_col2 = st.columns(
+                [3, 1]
+            )
 
             with forgot_col2:
 
@@ -83,10 +91,10 @@ def render_login():
                     "Forgot password?",
                     key="forgot_password",
                 ):
+
                     st.info(
                         "Password recovery will be available soon."
                     )
-
 
             # ----------------------------------------------------
             # LOGIN
@@ -98,6 +106,22 @@ def render_login():
                 use_container_width=True,
                 key="login_submit",
             ):
+
+                if not email.strip():
+
+                    st.error(
+                        "Please enter your email."
+                    )
+
+                    st.stop()
+
+                if not password:
+
+                    st.error(
+                        "Please enter your password."
+                    )
+
+                    st.stop()
 
                 try:
 
@@ -112,20 +136,61 @@ def render_login():
                             "Invalid email or password."
                         )
 
-                    else:
+                        st.stop()
 
-                        login_user(user)
-                        
-                        st.session_state["page"] = "dashboard"
+                    # --------------------------------------------
+                    # CREATE SESSION
+                    # --------------------------------------------
 
-                        st.rerun()
+                    login_user(user)
 
-                except Exception:
+                    # --------------------------------------------
+                    # LOAD PROFILE FROM DATABASE
+                    # --------------------------------------------
 
-                    st.error(
-                        "Unable to login right now. Please try again."
+                    profile = get_profile_by_user_id(
+                        user["id"]
                     )
 
+                    if profile is None:
+
+                        # New user / incomplete onboarding
+
+                        st.session_state[
+                            "onboarding_complete"
+                        ] = False
+
+                        st.session_state[
+                            "onboarding_step"
+                        ] = 1
+
+                        st.session_state[
+                            "page"
+                        ] = "onboarding"
+
+                    else:
+
+                        # Existing user
+
+                        st.session_state[
+                            "profile_id"
+                        ] = profile.id
+
+                        st.session_state[
+                            "onboarding_complete"
+                        ] = True
+
+                        st.session_state[
+                            "page"
+                        ] = "dashboard"
+
+                    st.rerun()
+
+                except Exception as error:
+
+                    st.error(
+                        f"Unable to login right now: {error}"
+                    )
 
             # ----------------------------------------------------
             # DIVIDER
@@ -173,7 +238,6 @@ def render_login():
                 """
             )
 
-
             # ----------------------------------------------------
             # SOCIAL LOGIN PLACEHOLDERS
             # ----------------------------------------------------
@@ -196,7 +260,6 @@ def render_login():
                     key="login_github",
                 )
 
-
             # ----------------------------------------------------
             # SIGNUP
             # ----------------------------------------------------
@@ -209,7 +272,6 @@ def render_login():
                 """
             )
 
-
             if st.button(
                 "Create Account",
                 use_container_width=True,
@@ -217,4 +279,5 @@ def render_login():
             ):
 
                 st.session_state["page"] = "signup"
+
                 st.rerun()

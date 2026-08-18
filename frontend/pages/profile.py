@@ -1,5 +1,8 @@
 import streamlit as st
-
+from backend.repositories.profile_repository import (
+    get_profile_by_user_id,
+    update_profile,
+)
 
 # ================================================================
 # CAREER OPTIONS
@@ -83,6 +86,126 @@ TIME_OPTIONS = [
 
 
 def render_profile():
+
+    user_id = st.session_state.get(
+        "user_id"
+    )
+
+    if not user_id:
+
+        st.session_state["page"] = "login"
+
+        st.rerun()
+
+    # ------------------------------------------------------------
+    # LOAD PROFILE FROM DATABASE
+    # ------------------------------------------------------------
+
+    profile = get_profile_by_user_id(
+        user_id
+    )
+
+    if profile is None:
+
+        st.session_state[
+            "onboarding_complete"
+        ] = False
+
+        st.session_state[
+            "page"
+        ] = "onboarding"
+
+        st.rerun()
+
+    # ------------------------------------------------------------
+    # CONVERT ORM OBJECT → UI DATA
+    # ------------------------------------------------------------
+
+    data = {
+        "career_goal": profile.career_goal,
+
+        "experience_level":
+            profile.experience_level,
+
+        "skills": [
+            skill.skill
+            for skill in profile.skills
+        ],
+
+        "experience":
+            profile.experience,
+
+        "target":
+            profile.target,
+
+        "timeline":
+            profile.timeline,
+
+        "daily_time":
+            profile.daily_time,
+    }
+
+    # ------------------------------------------------------------
+    # EDIT STATE
+    # ------------------------------------------------------------
+
+    if "editing_profile" not in st.session_state:
+
+        st.session_state[
+            "editing_profile"
+        ] = False
+
+    editing = st.session_state[
+        "editing_profile"
+    ]
+
+    # ------------------------------------------------------------
+    # HEADER
+    # ------------------------------------------------------------
+
+    st.html(
+        """
+        <div
+            style="
+                text-align:center;
+                max-width:750px;
+                margin:55px auto 35px;
+            "
+        >
+
+            <div class="devxp-eyebrow">
+                DEVELOPER PROFILE
+            </div>
+
+            <h1 style="
+                color:#F4F7F5;
+                font-size:42px;
+                font-weight:800;
+                margin-top:18px;
+            ">
+                Here's where you stand.
+            </h1>
+
+            <p style="
+                color:#91A5AA;
+                font-size:17px;
+                line-height:1.6;
+            ">
+                Your developer profile is the foundation
+                of everything DEV/XP builds for you.
+            </p>
+
+        </div>
+        """
+    )
+
+    if editing:
+
+        render_edit_profile(data)
+
+        return
+
+    render_profile_view(data)
 
     # ============================================================
     # GET DATA
@@ -749,34 +872,55 @@ def render_edit_profile(data):
 
                         st.stop()
 
-
-                    # --------------------------------------------
-                    # SAVE EVERYTHING
-                    # --------------------------------------------
-
-                    data["career_goal"] = final_goal.strip()
-
-                    data["experience_level"] = selected_level
-
-                    data["skills"] = selected_skills
-
-                    data["experience"] = selected_experience
-
-                    data["target"] = selected_target
-
-                    data["timeline"] = selected_timeline
-
-                    data["daily_time"] = selected_time
-
-
-                    # --------------------------------------------
-                    # EXIT EDIT MODE
-                    # --------------------------------------------
-
-                    st.session_state["editing_profile"] = False
-
-                    st.success(
-                        "Profile updated successfully."
+                    user_id = st.session_state.get(
+                        "user_id"
                     )
 
-                    st.rerun()
+                    if not user_id:
+
+                        st.error(
+                            "Your session has expired. Please login again."
+                        )
+
+                        st.stop()
+
+                    try:
+
+                        updated_profile = update_profile(
+                            user_id=user_id,
+                            career_goal=final_goal.strip(),
+                            experience_level=selected_level,
+                            experience=selected_experience,
+                            target=selected_target,
+                            timeline=selected_timeline,
+                            daily_time=selected_time,
+                            skills=selected_skills,
+                        )
+
+                        if updated_profile is None:
+
+                            st.error(
+                                "Developer profile not found."
+                            )
+
+                            st.stop()
+
+                        st.session_state[
+                            "profile_id"
+                        ] = updated_profile.id
+
+                        st.session_state[
+                            "editing_profile"
+                        ] = False
+
+                        st.success(
+                            "Profile updated successfully."
+                        )
+
+                        st.rerun()
+
+                    except Exception as error:
+
+                        st.error(
+                            f"Unable to update profile: {error}"
+                        )

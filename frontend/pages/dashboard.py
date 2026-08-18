@@ -13,6 +13,19 @@ def render_dashboard():
 
     load_dashboard_theme()
 
+    # ============================================================
+    # AUTHENTICATION
+    # ============================================================
+
+    user_id = st.session_state.get(
+        "user_id"
+    )
+
+    if not user_id:
+
+        st.session_state["page"] = "login"
+
+        st.rerun()
 
     # ============================================================
     # USER DATA
@@ -28,89 +41,106 @@ def render_dashboard():
         "",
     )
 
-    user_id = st.session_state.get("user_id")
-
-    profile = get_profile_by_user_id(user_id)
-
-
-    career_goal = profile.get(
-        "career_goal",
-        "Your career goal",
+    # ============================================================
+    # LOAD PROFILE FROM DATABASE
+    # ============================================================
+    user_id = st.session_state.get(
+        "user_id"
     )
 
-    experience_level = profile.get(
-        "experience_level",
-        "Not specified",
+    if not user_id:
+
+        st.session_state["page"] = "login"
+
+        st.rerun()
+        
+    profile = get_profile_by_user_id(
+        user_id
     )
 
-    timeline = profile.get(
-        "timeline",
-        "Not specified",
+    if profile is None:
+
+        st.session_state[
+            "onboarding_complete"
+        ] = False
+
+        st.session_state[
+            "page"
+        ] = "onboarding"
+
+        st.rerun()
+
+    # ============================================================
+    # PROFILE DATA
+    # ============================================================
+
+    career_goal = profile.career_goal
+
+    experience_level = (
+        profile.experience_level
     )
 
-    skills = profile.get(
-        "skills",
-        [],
-    )
+    timeline = profile.timeline
 
+    skills = profile.skills
 
     # ============================================================
     # ROADMAP DATA
     # ============================================================
 
-    roadmap = None
+    roadmap = generate_roadmap(
+        profile
+    )
 
-    phases = []
+    phases = roadmap.get(
+        "phases",
+        [],
+    )
+
+    # ============================================================
+    # CURRENT SESSION PROGRESS
+    # ============================================================
+
+    if "roadmap_progress" not in st.session_state:
+
+        st.session_state[
+            "roadmap_progress"
+        ] = {}
+
+    progress = st.session_state[
+        "roadmap_progress"
+    ]
 
     total_tasks = 0
 
     completed_tasks = 0
 
+    for phase_index, phase in enumerate(
+        phases
+    ):
 
-    if profile:
-
-        roadmap = generate_roadmap(
-            profile
-        )
-
-        phases = roadmap.get(
-            "phases",
+        topics = phase.get(
+            "topics",
             [],
         )
 
-        progress = st.session_state.get(
-            "roadmap_progress",
-            {},
-        )
-
-
-        for phase_index, phase in enumerate(
-            phases
+        for topic_index, topic in enumerate(
+            topics
         ):
 
-            topics = phase.get(
-                "topics",
-                [],
+            task_id = (
+                f"phase_{phase_index}"
+                f"_task_{topic_index}"
             )
 
-            for topic_index, topic in enumerate(
-                topics
+            total_tasks += 1
+
+            if progress.get(
+                task_id,
+                False,
             ):
 
-                task_id = (
-                    f"phase_{phase_index}"
-                    f"_task_{topic_index}"
-                )
-
-                total_tasks += 1
-
-                if progress.get(
-                    task_id,
-                    False,
-                ):
-
-                    completed_tasks += 1
-
+                completed_tasks += 1
 
     if total_tasks:
 
@@ -124,13 +154,11 @@ def render_dashboard():
 
         roadmap_progress = 0
 
-
     project_count = sum(
         1
         for phase in phases
         if phase.get("project")
     )
-
 
     # ============================================================
     # APPLICATION LAYOUT

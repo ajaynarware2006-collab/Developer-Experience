@@ -2,6 +2,7 @@ import streamlit as st
 
 from frontend.styles.theme import load_theme
 from frontend.components.navbar import render_navbar
+
 from frontend.pages.landing import render_landing
 from frontend.pages.login import render_login
 from frontend.pages.signup import render_signup
@@ -10,37 +11,10 @@ from frontend.pages.profile import render_profile
 from frontend.pages.roadmap import render_roadmap
 from frontend.pages.dashboard import render_dashboard
 
+
 # ============================================================
 # PAGE CONFIG
 # ============================================================
-def is_authenticated():
-
-    return st.session_state.get(
-        "is_authenticated",
-        False,
-    )
-
-PROTECTED_PAGES = {
-    "onboarding",
-    "profile",
-    "roadmap",
-    "dashboard",
-}
-
-current_page = st.session_state.get(
-    "page",
-    "landing",
-)
-
-
-if (
-    current_page in PROTECTED_PAGES
-    and not is_authenticated()
-):
-
-    st.session_state["page"] = "login"
-
-    st.rerun()
 
 st.set_page_config(
     page_title="DEV/XP",
@@ -49,19 +23,51 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
+
+# ============================================================
+# SESSION INITIALIZATION
+# ============================================================
+
+if "page" not in st.session_state:
+
+    st.session_state["page"] = "landing"
+
+
+if "is_authenticated" not in st.session_state:
+
+    st.session_state[
+        "is_authenticated"
+    ] = False
+
+
+# ============================================================
+# AUTHENTICATION
+# ============================================================
+
+PROTECTED_PAGES = {
+    "onboarding",
+    "profile",
+    "roadmap",
+    "dashboard",
+}
+
+
+if (
+    st.session_state["page"]
+    in PROTECTED_PAGES
+    and not st.session_state["is_authenticated"]
+):
+
+    st.session_state["page"] = "login"
+
+    st.rerun()
+
+
 # ============================================================
 # THEME
 # ============================================================
 
 load_theme()
-
-
-# ============================================================
-# SESSION STATE
-# ============================================================
-
-if "page" not in st.session_state:
-    st.session_state["page"] = "landing"
 
 
 # ============================================================
@@ -76,16 +82,33 @@ render_navbar()
 # ============================================================
 
 pages = {
-    "landing": render_landing,
-    "login": render_login,
-    "signup": render_signup,
-    "onboarding": render_onboarding,
-    "profile": render_profile,
-    "roadmap": render_roadmap,
-    "dashboard": render_dashboard,
+
+    "landing":
+        render_landing,
+
+    "login":
+        render_login,
+
+    "signup":
+        render_signup,
+
+    "onboarding":
+        render_onboarding,
+
+    "profile":
+        render_profile,
+
+    "roadmap":
+        render_roadmap,
+
+    "dashboard":
+        render_dashboard,
 }
 
-current_page = st.session_state["page"]
+
+current_page = st.session_state[
+    "page"
+]
+
 
 pages[current_page]()
-
