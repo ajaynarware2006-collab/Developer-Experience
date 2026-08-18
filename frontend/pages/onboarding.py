@@ -1,7 +1,8 @@
 import streamlit as st
 from backend.repositories.profile_repository import (
-    create_developer_profile
+    create_profile
 )
+from backend.repositories.profile_repository import create_profile
 
 def render_onboarding():
 
@@ -623,7 +624,7 @@ def render_onboarding():
 
                     try:
 
-                        profile_id = create_developer_profile(
+                        profile = create_profile(
                             user_id=user_id,
                             career_goal=data["career_goal"],
                             experience_level=data["experience_level"],
@@ -634,7 +635,7 @@ def render_onboarding():
                             skills=data["skills"],
                         )
 
-                        st.session_state["profile_id"] = profile_id
+                        st.session_state["profile_id"] = profile.id
 
                         st.session_state["onboarding_complete"] = True
 

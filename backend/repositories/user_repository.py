@@ -1,4 +1,7 @@
-from backend.database.connection import get_connection
+from sqlalchemy import select
+
+from backend.database.connection import SessionLocal
+from backend.models.user import User
 
 
 def create_user(
@@ -6,55 +9,29 @@ def create_user(
     email: str,
     password_hash: str,
 ):
-    query = """
-        INSERT INTO users (
-            name,
-            email,
-            password_hash
+    with SessionLocal() as db:
+
+        user = User(
+            name=name,
+            email=email,
+            password_hash=password_hash,
         )
-        VALUES (%s, %s, %s)
-        RETURNING id, name, email;
-    """
 
-    with get_connection() as connection:
+        db.add(user)
+        db.commit()
+        db.refresh(user)
 
-        with connection.cursor() as cursor:
-
-            cursor.execute(
-                query,
-                (
-                    name,
-                    email,
-                    password_hash,
-                ),
-            )
-
-            user = cursor.fetchone()
-
-        connection.commit()
-
-    return user
+        return user
 
 
 def get_user_by_email(email: str):
 
-    query = """
-        SELECT
-            id,
-            name,
-            email,
-            password_hash
-        FROM users
-        WHERE email = %s;
-    """
+    with SessionLocal() as db:
 
-    with get_connection() as connection:
+        query = select(User).where(
+            User.email == email
+        )
 
-        with connection.cursor() as cursor:
+        user = db.scalar(query)
 
-            cursor.execute(
-                query,
-                (email,),
-            )
-
-            return cursor.fetchone()
+        return user

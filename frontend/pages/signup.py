@@ -149,9 +149,9 @@ def render_signup():
                             password=password,
                         )
 
-                        st.session_state["user_id"] = user[0]
-                        st.session_state["user_name"] = user[1]
-                        st.session_state["user_email"] = user[2]
+                        st.session_state["user_id"] = user.id
+                        st.session_state["user_name"] = user.name
+                        st.session_state["user_email"] = user.email
 
                         st.session_state["is_authenticated"] = True
 

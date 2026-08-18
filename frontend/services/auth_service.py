@@ -65,19 +65,14 @@ def authenticate_user(
     if not user:
         return None
 
-    user_id = user[0]
-    name = user[1]
-    user_email = user[2]
-    password_hash = user[3]
-
     if not verify_password(
         password,
-        password_hash,
+        user.password_hash,
     ):
         return None
 
     return {
-        "id": user_id,
-        "name": name,
-        "email": user_email,
+        "id": user.id,
+        "name": user.name,
+        "email": user.email,
     }

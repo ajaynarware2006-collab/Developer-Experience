@@ -3,7 +3,7 @@ import streamlit as st
 from backend.services.roadmap_engine import generate_roadmap
 from frontend.services.session_service import logout_user
 from frontend.styles.dashboard_theme import load_dashboard_theme
-
+from backend.repositories.profile_repository import get_profile_by_user_id
 
 def render_dashboard():
 
@@ -28,10 +28,9 @@ def render_dashboard():
         "",
     )
 
-    profile = st.session_state.get(
-        "onboarding",
-        {},
-    )
+    user_id = st.session_state.get("user_id")
+
+    profile = get_profile_by_user_id(user_id)
 
 
     career_goal = profile.get(
@@ -458,7 +457,7 @@ def render_dashboard():
                     </div>
 
                     <h1>
-                        Welcome back, {name}.
+                        Welcome to the DEV/XP, {name}.
                     </h1>
 
                     <p>

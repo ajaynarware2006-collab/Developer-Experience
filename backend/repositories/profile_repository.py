@@ -1,7 +1,11 @@
-from backend.database.connection import get_connection
-# from sqlalchemy import 
+from sqlalchemy import select
 
-def create_developer_profile(
+from backend.database.connection import SessionLocal
+from backend.models.developer_profile import DeveloperProfile
+from backend.models.profile_skill import ProfileSkill
+
+
+def create_profile(
     user_id: int,
     career_goal: str,
     experience_level: str,
@@ -11,65 +15,44 @@ def create_developer_profile(
     daily_time: str,
     skills: list[str],
 ):
-    profile_query = """
-        INSERT INTO developer_profiles (
-            user_id,
-            career_goal,
-            experience_level,
-            experience,
-            target,
-            timeline,
-            daily_time
+    with SessionLocal() as db:
+
+        profile = DeveloperProfile(
+            user_id=user_id,
+            career_goal=career_goal,
+            experience_level=experience_level,
+            experience=experience,
+            target=target,
+            timeline=timeline,
+            daily_time=daily_time,
         )
-        VALUES (%s, %s, %s, %s, %s, %s, %s)
-        RETURNING id;
-    """
 
-    skills_query = """
-        INSERT INTO profile_skills (
-            profile_id,
-            skill
-        )
-        VALUES (%s, %s)
-        ON CONFLICT (profile_id, skill)
-        DO NOTHING;
-    """
+        db.add(profile)
 
-    with get_connection() as connection:
+        db.flush()
 
-        with connection.cursor() as cursor:
+        for skill in skills:
 
-            # Create developer profile
-            cursor.execute(
-                profile_query,
-                (
-                    user_id,
-                    career_goal,
-                    experience_level,
-                    experience,
-                    target,
-                    timeline,
-                    daily_time,
-                ),
+            profile_skill = ProfileSkill(
+                profile_id=profile.id,
+                skill=skill,
             )
 
-            profile_id = cursor.fetchone()[0]
+            db.add(profile_skill)
 
-            # Save skills
-            for skill in skills:
+        db.commit()
 
-                cursor.execute(
-                    skills_query,
-                    (
-                        profile_id,
-                        skill,
-                    ),
-                )
+        db.refresh(profile)
 
-        connection.commit()
-
-    return profile_id
-
-# def get_profile():
+        return profile
 
 
+def get_profile_by_user_id(user_id: int):
+
+    with SessionLocal() as db:
+
+        return (
+            db.query(DeveloperProfile)
+            .filter(DeveloperProfile.user_id == user_id)
+            .first()
+        )
