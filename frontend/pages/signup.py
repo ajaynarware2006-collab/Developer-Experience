@@ -1,5 +1,7 @@
 import streamlit as st
 from frontend.services.auth_service import register_user
+from backend.services.verification_service import create_email_verification
+from backend.services.email_service import send_verification_email
 
 def render_signup():
 
@@ -148,6 +150,15 @@ def render_signup():
                             email=email.strip().lower(),
                             password=password,
                         )
+                        verification, code = create_email_verification(
+                            user.id,
+                            user.email,
+                        )
+
+                        send_verification_email(
+                            user.email,
+                            code,
+                        )
 
                         st.session_state["user_id"] = user.id
                         st.session_state["user_name"] = user.name
@@ -157,6 +168,9 @@ def render_signup():
 
                         st.session_state["page"] = "onboarding"
 
+                        st.session_state["verification_user_id"] = user.id
+                        st.session_state["verification_email"] = user.email
+                        st.session_state["page"] = "email_verification"
                         st.rerun()
 
                     except ValueError as error:

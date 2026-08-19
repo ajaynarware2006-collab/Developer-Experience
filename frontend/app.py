@@ -10,7 +10,7 @@ from frontend.pages.onboarding import render_onboarding
 from frontend.pages.profile import render_profile
 from frontend.pages.roadmap import render_roadmap
 from frontend.pages.dashboard import render_dashboard
-
+from frontend.pages.email_verifiction import render_email_verification
 
 # ============================================================
 # PAGE CONFIG
@@ -103,6 +103,9 @@ pages = {
 
     "dashboard":
         render_dashboard,
+
+    "email_verification":
+        render_email_verification,
 }
 
 

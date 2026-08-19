@@ -142,6 +142,25 @@ def render_login():
                     # CREATE SESSION
                     # --------------------------------------------
 
+                    if not user["email_verified"]:
+
+                        st.warning(
+                            "Please verify your email before logging in."
+                        )
+
+                        st.session_state[
+                            "verification_user_id"
+                        ] = user["id"]
+
+                        st.session_state[
+                            "verification_email"
+                        ] = user["email"]
+
+                        st.session_state[
+                            "page"
+                        ] = "email_verification"
+
+                        st.rerun()
                     login_user(user)
 
                     # --------------------------------------------
