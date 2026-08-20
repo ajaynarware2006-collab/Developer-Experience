@@ -1,7 +1,7 @@
 import streamlit as st
+from backend.models.user import User
 
-
-def login_user(user: dict):
+def login_user(user: User):
 
     st.session_state[
         "is_authenticated"
@@ -9,15 +9,15 @@ def login_user(user: dict):
 
     st.session_state[
         "user_id"
-    ] = user["id"]
+    ] = user.id
 
     st.session_state[
         "user_name"
-    ] = user["name"]
+    ] = user.name
 
     st.session_state[
         "user_email"
-    ] = user["email"]
+    ] = user.email
 
 
 def logout_user():

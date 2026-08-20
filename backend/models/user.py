@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import String, Text, DateTime, func
+from sqlalchemy import String, Text, DateTime, func , Boolean
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from backend.database.base import Base
@@ -33,6 +33,8 @@ class User(Base):
         DateTime,
         server_default=func.now()
     )
+
+    email_verified = mapped_column(Boolean , default=False)
 
     developer_profile = relationship(
         "DeveloperProfile",

@@ -5,6 +5,8 @@ from frontend.services.session_service import login_user
 from backend.repositories.profile_repository import (
     get_profile_by_user_id,
 )
+from backend.services.verification_service import create_email_verification
+from backend.services.email_service import send_verification_code
 
 
 def render_login():
@@ -100,12 +102,17 @@ def render_login():
             # LOGIN
             # ----------------------------------------------------
 
+            if "account_created" not in st.session_state:
+                st.session_state.account_created = False
+
             if st.button(
                 "LOGIN",
                 type="primary",
                 use_container_width=True,
                 key="login_submit",
+                disabled=st.session_state.account_created
             ):
+                
 
                 if not email.strip():
 
@@ -125,6 +132,8 @@ def render_login():
 
                 try:
 
+                    st.session_state.account_created = True
+                    
                     user = authenticate_user(
                         email=email,
                         password=password,
@@ -142,25 +151,29 @@ def render_login():
                     # CREATE SESSION
                     # --------------------------------------------
 
-                    if not user["email_verified"]:
+                    if not user.email_verified:
 
-                        st.warning(
-                            "Please verify your email before logging in."
+                        _, code = create_email_verification(
+                            user.id,
+                            user.email,
                         )
 
-                        st.session_state[
-                            "verification_user_id"
-                        ] = user["id"]
+                        send_verification_code(
+                            user.email,
+                            code,
+                        )
 
-                        st.session_state[
-                            "verification_email"
-                        ] = user["email"]
+                        st.session_state["verification_user_id"] = user.id
+                        st.session_state["verification_email"] = user.email
+                        st.session_state["page"] = "email_verification"
 
-                        st.session_state[
-                            "page"
-                        ] = "email_verification"
+                        st.warning(
+                            "Your email is not verified. A new verification code has been sent."
+                        )
 
                         st.rerun()
+
+
                     login_user(user)
 
                     # --------------------------------------------
@@ -168,7 +181,7 @@ def render_login():
                     # --------------------------------------------
 
                     profile = get_profile_by_user_id(
-                        user["id"]
+                        user.id
                     )
 
                     if profile is None:

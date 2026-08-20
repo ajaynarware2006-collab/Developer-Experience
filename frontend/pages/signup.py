@@ -1,7 +1,7 @@
 import streamlit as st
 from frontend.services.auth_service import register_user
 from backend.services.verification_service import create_email_verification
-from backend.services.email_service import send_verification_email
+from backend.services.email_service import send_verification_code
 
 def render_signup():
 
@@ -108,12 +108,15 @@ def render_signup():
             # ----------------------------------------------------
             # CREATE ACCOUNT
             # ----------------------------------------------------
+            if "account_created" not in st.session_state:
+                st.session_state.account_created = False
 
             if st.button(
                 "Create Account",
                 type="primary",
                 use_container_width=True,
                 key="signup_submit",
+                disabled=not name or not email
             ):
 
                 if not name or not email:
@@ -142,7 +145,7 @@ def render_signup():
                     )
 
                 else:
-
+                    st.session_state.account_create = True
                     try:
 
                         user = register_user(
@@ -150,26 +153,21 @@ def render_signup():
                             email=email.strip().lower(),
                             password=password,
                         )
-                        verification, code = create_email_verification(
+
+                        _, code = create_email_verification(
                             user.id,
                             user.email,
                         )
 
-                        send_verification_email(
+                        send_verification_code(
                             user.email,
                             code,
                         )
 
-                        st.session_state["user_id"] = user.id
-                        st.session_state["user_name"] = user.name
-                        st.session_state["user_email"] = user.email
-
-                        st.session_state["is_authenticated"] = True
-
-                        st.session_state["page"] = "onboarding"
-
                         st.session_state["verification_user_id"] = user.id
+                        st.session_state["user_name"] = user.name
                         st.session_state["verification_email"] = user.email
+
                         st.session_state["page"] = "email_verification"
                         st.rerun()
 

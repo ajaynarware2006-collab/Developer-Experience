@@ -30,7 +30,7 @@ SMTP_PASSWORD = os.getenv(
 )
 
 
-def send_verification_email(
+def send_verification_code(
     recipient_email: str,
     verification_code: str,
 ):
@@ -57,22 +57,22 @@ def send_verification_email(
 
     message.set_content(
         f"""
-Hello,
+            Hello,
 
-Welcome to DEV/XP.
+            Welcome to DEV/XP.
 
-Your email verification code is:
+            Your email verification code is:
 
-{verification_code}
+            {verification_code}
 
-This code will expire in 10 minutes.
+            This code will expire in 10 minutes.
 
-If you did not create a DEV/XP account,
-you can safely ignore this email.
+            If you did not create a DEV/XP account,
+            you can safely ignore this email.
 
-— DEV/XP
-"""
-    )
+            — DEV/XP
+        """
+            )
 
     with smtplib.SMTP(
         SMTP_HOST,
@@ -89,3 +89,4 @@ you can safely ignore this email.
         server.send_message(
             message
         )
+    

@@ -3,6 +3,7 @@ from backend.repositories.user_repository import (
     get_user_by_email,
 )
 
+from backend.models.user import User
 import bcrypt
 
 
@@ -56,7 +57,7 @@ def register_user(
 def authenticate_user(
     email: str,
     password: str,
-):
+) -> User:
 
     email = email.strip().lower()
 
@@ -71,8 +72,4 @@ def authenticate_user(
     ):
         return None
 
-    return {
-        "id": user.id,
-        "name": user.name,
-        "email": user.email,
-    }
+    return user

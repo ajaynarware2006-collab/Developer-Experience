@@ -8,9 +8,6 @@ from backend.repositories.email_verification_repository import (
     increment_attempts,
     mark_verified,
 )
-from backend.repositories.user_repository import (
-    get_user_by_email,
-)
 from backend.database.connection import SessionLocal
 from backend.models.user import User
 
@@ -44,7 +41,7 @@ def create_email_verification(
     code_hash = hash_code(code)
 
     expires_at = (
-        datetime.utcnow()
+        datetime.now()
         + timedelta(
             minutes=OTP_EXPIRATION_MINUTES
         )

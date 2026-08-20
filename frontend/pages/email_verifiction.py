@@ -1,9 +1,8 @@
 import streamlit as st
 
-from backend.services.verification_service import (
-    verify_email_code,
-)
-
+from backend.services.verification_service import verify_email_code 
+from frontend.services.session_service import login_user
+from backend.repositories.user_repository import get_user_by_id
 
 def render_email_verification():
 
@@ -21,6 +20,9 @@ def render_email_verification():
 
         st.rerun()
 
+    
+
+    
     st.markdown(
         "<h1 style='text-align:center;'>"
         "Verify your email"
@@ -76,6 +78,13 @@ def render_email_verification():
 
         st.success(message)
 
+        st.session_state["is_authenticated"] = True
+
+        user = get_user_by_id(
+            st.session_state["verification_user_id"]
+        )
+
+        login_user(user)
         st.session_state[
             "verification_user_id"
         ] = None
@@ -86,6 +95,6 @@ def render_email_verification():
 
         st.session_state[
             "page"
-        ] = "login"
+        ] = "onboarding"
 
         st.rerun()
