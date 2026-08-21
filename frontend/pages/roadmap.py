@@ -1,7 +1,7 @@
 import streamlit as st
 
 from backend.services.roadmap_engine import generate_roadmap
-
+from backend.repositories.profile_repository import get_profile_by_user_id
 
 def render_roadmap():
 
@@ -9,7 +9,8 @@ def render_roadmap():
     # PROFILE
     # ============================================================
 
-    profile = st.session_state.get("onboarding", {})
+    user_id = st.session_state.get("user_id")
+    profile = get_profile_by_user_id(user_id)
 
     if not profile:
 

@@ -109,14 +109,14 @@ def render_signup():
             # CREATE ACCOUNT
             # ----------------------------------------------------
             if "account_created" not in st.session_state:
-                st.session_state.account_created = False
+                st.session_state["account_created"] = False
 
             if st.button(
                 "Create Account",
                 type="primary",
                 use_container_width=True,
                 key="signup_submit",
-                disabled=not name or not email
+                disabled=st.session_state["account_created"]
             ):
 
                 if not name or not email:
@@ -145,7 +145,7 @@ def render_signup():
                     )
 
                 else:
-                    st.session_state.account_create = True
+                    st.session_state["account_created"] = True
                     try:
 
                         user = register_user(

@@ -111,6 +111,11 @@ def update_profile(
         # Remove old skills
         profile.skills.clear()
 
+        # IMPORTANT:
+        # Force SQLAlchemy to execute the DELETEs
+        # before inserting the new skills.
+        db.flush()
+
         # Add new skills
         for skill in skills:
 

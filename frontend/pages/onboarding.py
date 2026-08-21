@@ -645,10 +645,10 @@ def render_onboarding():
                         )
 
                                         
-                        st.session_state.pop(
-                            "onboarding",
-                            None,
-                        )
+                        # st.session_state.pop(
+                        #     "onboarding",
+                        #     None,
+                        # )
 
                         st.session_state.pop(
                             "onboarding_step",

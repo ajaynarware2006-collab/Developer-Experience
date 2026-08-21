@@ -103,14 +103,14 @@ def render_login():
             # ----------------------------------------------------
 
             if "account_created" not in st.session_state:
-                st.session_state.account_created = False
+                st.session_state["account_created"] = False
 
             if st.button(
                 "LOGIN",
                 type="primary",
                 use_container_width=True,
                 key="login_submit",
-                disabled=st.session_state.account_created
+                disabled=st.session_state["account_created"]
             ):
                 
 
@@ -132,7 +132,7 @@ def render_login():
 
                 try:
 
-                    st.session_state.account_created = True
+                    st.session_state["account_created"] = True
                     
                     user = authenticate_user(
                         email=email,

@@ -246,15 +246,15 @@ def render_dashboard():
             )
 
 
-            if st.button(
+            st.button(
                 "⌁   Roadmap",
                 key="dashboard_roadmap_nav",
                 use_container_width=True,
-            ):
+            )
 
-                st.session_state["page"] = "roadmap"
+                # st.session_state["page"] = "roadmap"
 
-                st.rerun()
+                # st.rerun()
 
 
             if st.button(

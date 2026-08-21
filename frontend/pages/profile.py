@@ -121,29 +121,7 @@ def render_profile():
     # CONVERT ORM OBJECT → UI DATA
     # ------------------------------------------------------------
 
-    data = {
-        "career_goal": profile.career_goal,
-
-        "experience_level":
-            profile.experience_level,
-
-        "skills": [
-            skill.skill
-            for skill in profile.skills
-        ],
-
-        "experience":
-            profile.experience,
-
-        "target":
-            profile.target,
-
-        "timeline":
-            profile.timeline,
-
-        "daily_time":
-            profile.daily_time,
-    }
+    data = profile
 
     # ------------------------------------------------------------
     # EDIT STATE
@@ -207,96 +185,6 @@ def render_profile():
 
     render_profile_view(data)
 
-    # ============================================================
-    # GET DATA
-    # ============================================================
-
-    if "onboarding" not in st.session_state:
-
-        st.warning(
-            "Your developer profile has not been created yet."
-        )
-
-        if st.button("Start Onboarding"):
-
-            st.session_state["page"] = "onboarding"
-            st.rerun()
-
-        return
-
-
-    data = st.session_state["onboarding"]
-
-
-    # ============================================================
-    # EDIT STATE
-    # ============================================================
-
-    if "editing_profile" not in st.session_state:
-        st.session_state["editing_profile"] = False
-
-
-    editing = st.session_state["editing_profile"]
-
-
-    # ============================================================
-    # HEADER
-    # ============================================================
-
-    st.html(
-        """
-        <div
-            style="
-                text-align:center;
-                max-width:750px;
-                margin:55px auto 35px;
-            "
-        >
-
-            <div class="devxp-eyebrow">
-                DEVELOPER PROFILE
-            </div>
-
-            <h1 style="
-                color:#F4F7F5;
-                font-size:42px;
-                font-weight:800;
-                margin-top:18px;
-            ">
-                Here's where you stand.
-            </h1>
-
-            <p style="
-                color:#91A5AA;
-                font-size:17px;
-                line-height:1.6;
-            ">
-                Your developer profile is the foundation
-                of everything DEV/XP builds for you.
-            </p>
-
-        </div>
-        """
-    )
-
-
-    # ============================================================
-    # EDIT MODE
-    # ============================================================
-
-    if editing:
-
-        render_edit_profile(data)
-
-        return
-
-
-    # ============================================================
-    # READ MODE
-    # ============================================================
-
-    render_profile_view(data)
-
 
 # =================================================================
 # PROFILE VIEW
@@ -304,40 +192,19 @@ def render_profile():
 
 def render_profile_view(data):
 
-    career_goal = data.get(
-        "career_goal",
-        "Not specified",
-    )
+    career_goal = data.career_goal
 
-    level = data.get(
-        "experience_level",
-        "Not specified",
-    )
+    level = data.experience_level
 
-    skills = data.get(
-        "skills",
-        [],
-    )
+    skills = data.skills
 
-    experience = data.get(
-        "experience",
-        "Not specified",
-    )
+    experience = data.experience
 
-    target = data.get(
-        "target",
-        "Not specified",
-    )
+    target = data.target
 
-    timeline = data.get(
-        "timeline",
-        "Not specified",
-    )
+    timeline = data.timeline
 
-    daily_time = data.get(
-        "daily_time",
-        "Not specified",
-    )
+    daily_time = data.daily_time
 
 
     # ============================================================
@@ -348,7 +215,7 @@ def render_profile_view(data):
 
     with center:
 
-        with st.container(key="profile-card"):
+        with st.container():
 
             # ----------------------------------------------------
             # CAREER GOAL
@@ -647,10 +514,7 @@ def render_edit_profile(data):
             # CAREER GOAL
             # ====================================================
 
-            current_goal = data.get(
-                "career_goal",
-                "",
-            )
+            current_goal = data.career_goal
 
             if current_goal in CAREER_OPTIONS:
 
@@ -686,10 +550,7 @@ def render_edit_profile(data):
             # LEVEL
             # ====================================================
 
-            current_level = data.get(
-                "experience_level",
-                "Beginner",
-            )
+            current_level = data.experience_level
 
             level_index = (
                 LEVEL_OPTIONS.index(current_level)
@@ -709,10 +570,7 @@ def render_edit_profile(data):
             # SKILLS
             # ====================================================
 
-            current_skills = data.get(
-                "skills",
-                [],
-            )
+            current_skills = data.skills
 
             selected_skills = st.multiselect(
                 "Skills",
@@ -730,10 +588,7 @@ def render_edit_profile(data):
             # EXPERIENCE
             # ====================================================
 
-            current_experience = data.get(
-                "experience",
-                EXPERIENCE_OPTIONS[0],
-            )
+            current_experience = data.experience
 
             experience_index = (
                 EXPERIENCE_OPTIONS.index(
@@ -755,10 +610,7 @@ def render_edit_profile(data):
             # TARGET
             # ====================================================
 
-            current_target = data.get(
-                "target",
-                TARGET_OPTIONS[0],
-            )
+            current_target = data.target
 
             target_index = (
                 TARGET_OPTIONS.index(
@@ -780,10 +632,7 @@ def render_edit_profile(data):
             # TIMELINE
             # ====================================================
 
-            current_timeline = data.get(
-                "timeline",
-                TIMELINE_OPTIONS[0],
-            )
+            current_timeline = data.timeline
 
             timeline_index = (
                 TIMELINE_OPTIONS.index(
@@ -805,10 +654,7 @@ def render_edit_profile(data):
             # DAILY TIME
             # ====================================================
 
-            current_time = data.get(
-                "daily_time",
-                TIME_OPTIONS[0],
-            )
+            current_time = data.daily_time
 
             time_index = (
                 TIME_OPTIONS.index(
