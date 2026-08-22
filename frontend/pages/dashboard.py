@@ -44,15 +44,6 @@ def render_dashboard():
     # ============================================================
     # LOAD PROFILE FROM DATABASE
     # ============================================================
-    user_id = st.session_state.get(
-        "user_id"
-    )
-
-    if not user_id:
-
-        st.session_state["page"] = "login"
-
-        st.rerun()
         
     profile = get_profile_by_user_id(
         user_id
@@ -76,9 +67,7 @@ def render_dashboard():
 
     career_goal = profile.career_goal
 
-    experience_level = (
-        profile.experience_level
-    )
+    experience_level = profile.experience_level
 
     timeline = profile.timeline
 
@@ -88,14 +77,9 @@ def render_dashboard():
     # ROADMAP DATA
     # ============================================================
 
-    roadmap = generate_roadmap(
-        profile
-    )
+    roadmap = generate_roadmap(profile)
 
-    phases = roadmap.get(
-        "phases",
-        [],
-    )
+    phases = roadmap.get("phases",[],)
 
     # ============================================================
     # CURRENT SESSION PROGRESS
@@ -103,21 +87,15 @@ def render_dashboard():
 
     if "roadmap_progress" not in st.session_state:
 
-        st.session_state[
-            "roadmap_progress"
-        ] = {}
+        st.session_state["roadmap_progress"] = {}
 
-    progress = st.session_state[
-        "roadmap_progress"
-    ]
+    progress = st.session_state["roadmap_progress"]
 
     total_tasks = 0
 
     completed_tasks = 0
 
-    for phase_index, phase in enumerate(
-        phases
-    ):
+    for phase_index, phase in enumerate(phases):
 
         topics = phase.get(
             "topics",
