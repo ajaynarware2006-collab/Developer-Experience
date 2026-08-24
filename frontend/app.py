@@ -11,6 +11,8 @@ from frontend.pages.profile import render_profile
 from frontend.pages.roadmap import render_roadmap
 from frontend.pages.dashboard import render_dashboard
 from frontend.pages.email_verifiction import render_email_verification
+from frontend.pages.sem import rendersem
+from frontend.pages.features import render_features
 
 # ============================================================
 # PAGE CONFIG
@@ -71,41 +73,30 @@ load_theme()
 
 
 # ============================================================
-# NAVBAR
-# ============================================================
-
-render_navbar()
-
-
-# ============================================================
 # ROUTING
 # ============================================================
 
 pages = {
 
-    "landing":
-        render_landing,
+    "landing": render_landing,
 
-    "login":
-        render_login,
+    "login": render_login,
 
-    "signup":
-        render_signup,
+    "signup": render_signup,
 
-    "onboarding":
-        render_onboarding,
+    "onboarding": render_onboarding,
 
-    "profile":
-        render_profile,
+    "profile": render_profile,
 
-    "roadmap":
-        render_roadmap,
+    "roadmap": render_roadmap,
 
-    "dashboard":
-        render_dashboard,
+    "dashboard": render_dashboard,
 
-    "email_verification":
-        render_email_verification,
+    "email_verification": render_email_verification,
+
+    "sem": rendersem , 
+
+    "features" : render_features
 }
 
 

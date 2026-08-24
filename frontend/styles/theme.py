@@ -196,6 +196,10 @@ def load_theme():
             color: #12AAB3;
         }
 
+        .st-key-feature-button button{
+            border : 0px ;
+
+        }
 
         /* =========================================================
            HERO

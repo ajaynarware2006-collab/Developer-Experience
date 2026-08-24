@@ -1,8 +1,10 @@
 import streamlit as st
-
+from frontend.components.navbar import render_navbar
 
 def render_landing():
 
+    render_navbar()
+    
     # ============================================================
     # HERO
     # ============================================================

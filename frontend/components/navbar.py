@@ -3,13 +3,13 @@ import streamlit as st
 
 def render_navbar():
     st.html(
-        """
+        f"""
         <nav class="devxp-navbar">
 
             <div class="devxp-brand">
 
                 <div class="devxp-brand-mark">
-                    D
+                    {"D"}
                 </div>
 
                 <div>
@@ -19,22 +19,20 @@ def render_navbar():
             </div>
 
 
-            <div class="devxp-nav-right">
-
-                <div class="devxp-nav-link">
-                    Features
-                </div>
-
-                <div class="devxp-nav-link">
-                    How it works
-                </div>
-
-                <div class="devxp-nav-link">
-                    About
-                </div>
-
-            </div>
-
         </nav>
         """
     )
+
+    col1 , col2 , col3 = st.columns(3)
+
+    with col1:
+        if st.button("Feature",key="feature-button"):
+            st.session_state["page"] = "features"
+
+    with col2:
+        if st.button("how it work"):
+            st.session_state["page"] = "sem"
+
+    with col3:
+        if st.button("About"):
+            st.session_state["page"] = "sem"
