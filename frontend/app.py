@@ -13,6 +13,8 @@ from frontend.pages.dashboard import render_dashboard
 from frontend.pages.email_verifiction import render_email_verification
 from frontend.pages.sem import rendersem
 from frontend.pages.features import render_features
+from frontend.pages.how_it_work import render_how_it_works
+from frontend.pages.about import render_about
 
 # ============================================================
 # PAGE CONFIG
@@ -96,7 +98,11 @@ pages = {
 
     "sem": rendersem , 
 
-    "features" : render_features
+    "features" : render_features ,
+
+    "how_it_work" : render_how_it_works ,
+
+    "about" : render_about
 }
 
 

@@ -31,8 +31,8 @@ def render_navbar():
 
     with col2:
         if st.button("how it work"):
-            st.session_state["page"] = "sem"
+            st.session_state["page"] = "how_it_work"
 
     with col3:
         if st.button("About"):
-            st.session_state["page"] = "sem"
+            st.session_state["page"] = "about"
