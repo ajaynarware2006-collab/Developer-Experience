@@ -1,7 +1,7 @@
 import streamlit as st
 
-from frontend.services.auth_service import authenticate_user
-from frontend.services.session_service import login_user
+from backend.services.auth_service import authenticate_user
+from backend.services.session_service import login_user
 from backend.repositories.profile_repository import (
     get_profile_by_user_id,
 )

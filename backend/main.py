@@ -1,5 +1,7 @@
 from fastapi import FastAPI
 
+from backend.routers.auth import router as auth_router
+
 
 app = FastAPI(
     title="DEV/XP API",
@@ -8,8 +10,12 @@ app = FastAPI(
 )
 
 
+app.include_router(auth_router)
+
+
 @app.get("/health")
 def health_check():
+
     return {
         "status": "ok",
         "message": "DEV/XP API is running",

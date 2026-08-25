@@ -1,7 +1,6 @@
 import streamlit as st
 
 from frontend.styles.theme import load_theme
-from frontend.components.navbar import render_navbar
 
 from frontend.pages.landing import render_landing
 from frontend.pages.login import render_login
@@ -11,7 +10,6 @@ from frontend.pages.profile import render_profile
 from frontend.pages.roadmap import render_roadmap
 from frontend.pages.dashboard import render_dashboard
 from frontend.pages.email_verifiction import render_email_verification
-from frontend.pages.sem import rendersem
 from frontend.pages.features import render_features
 from frontend.pages.how_it_work import render_how_it_works
 from frontend.pages.about import render_about
@@ -95,8 +93,6 @@ pages = {
     "dashboard": render_dashboard,
 
     "email_verification": render_email_verification,
-
-    "sem": rendersem , 
 
     "features" : render_features ,
 

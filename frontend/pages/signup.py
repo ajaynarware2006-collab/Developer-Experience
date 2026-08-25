@@ -1,5 +1,5 @@
 import streamlit as st
-from frontend.services.auth_service import register_user
+from backend.services.auth_service import register_user
 from backend.services.verification_service import create_email_verification
 from backend.services.email_service import send_verification_code
 
@@ -111,6 +111,8 @@ def render_signup():
             if "account_created" not in st.session_state:
                 st.session_state["account_created"] = False
 
+            
+
             if st.button(
                 "Create Account",
                 type="primary",
@@ -118,6 +120,7 @@ def render_signup():
                 key="signup_submit",
                 disabled=st.session_state["account_created"]
             ):
+                
 
                 if not name or not email:
                     st.error(
@@ -145,34 +148,33 @@ def render_signup():
                     )
 
                 else:
-                    st.session_state["account_created"] = True
+
                     try:
+                        
 
                         user = register_user(
                             name=name.strip(),
                             email=email.strip().lower(),
                             password=password,
                         )
-
                         _, code = create_email_verification(
                             user.id,
                             user.email,
                         )
 
-                        send_verification_code(
-                            user.email,
-                            code,
-                        )
-
                         st.session_state["verification_user_id"] = user.id
+                        st.session_state["varification_code"] = code
                         st.session_state["user_name"] = user.name
                         st.session_state["verification_email"] = user.email
+
+                        st.session_state["account_created"] = True
 
                         st.session_state["page"] = "email_verification"
                         st.rerun()
 
                     except ValueError as error:
 
+                        st.session_state["account_created"] = False
                         st.error(str(error))
 
                     except Exception:

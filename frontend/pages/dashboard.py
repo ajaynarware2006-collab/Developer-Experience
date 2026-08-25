@@ -1,7 +1,7 @@
 import streamlit as st
 
 from backend.services.roadmap_engine import generate_roadmap
-from frontend.services.session_service import logout_user
+from backend.services.session_service import logout_user
 from frontend.styles.dashboard_theme import load_dashboard_theme
 from backend.repositories.profile_repository import get_profile_by_user_id
 

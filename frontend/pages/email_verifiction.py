@@ -1,17 +1,21 @@
 import streamlit as st
 
 from backend.services.verification_service import verify_email_code 
-from frontend.services.session_service import login_user
+from backend.services.session_service import login_user
 from backend.repositories.user_repository import get_user_by_id
+from backend.services.email_service import send_verification_code
 
 def render_email_verification():
 
-    user_id = st.session_state.get(
-        "verification_user_id"
-    )
+    user_id = st.session_state.get("verification_user_id")
 
-    email = st.session_state.get(
-        "verification_email"
+    code = st.session_state.get("varification_code")
+
+    email = st.session_state.get("verification_email")
+
+    send_verification_code(
+        email,
+        code,
     )
 
     if not user_id or not email:
@@ -43,58 +47,61 @@ def render_email_verification():
         unsafe_allow_html=True,
     )
 
-    code = st.text_input(
-        "Verification code",
-        max_chars=6,
-        placeholder="Enter 6-digit code",
-    )
+    _ , col , _ = st.columns([2,3,2])
 
-    if st.button(
-        "Verify Email",
-        type="primary",
-        use_container_width=True,
-    ):
-
-        if len(code.strip()) != 6:
-
-            st.error(
-                "Enter the 6-digit verification code."
-            )
-
-            st.stop()
-
-        success, message = (
-            verify_email_code(
-                user_id,
-                code,
-            )
+    with col:
+        code = st.text_input(
+            "Verification code",
+            max_chars=6,
+            placeholder="Enter 6-digit code",
         )
 
-        if not success:
+        if st.button(
+            "Verify Email",
+            type="primary",
+            use_container_width=True,
+        ):
 
-            st.error(message)
+            if len(code.strip()) != 6:
 
-            st.stop()
+                st.error(
+                    "Enter the 6-digit verification code."
+                )
 
-        st.success(message)
+                st.stop()
 
-        st.session_state["is_authenticated"] = True
+            success, message = (
+                verify_email_code(
+                    user_id,
+                    code,
+                )
+            )
 
-        user = get_user_by_id(
-            st.session_state["verification_user_id"]
-        )
+            if not success:
 
-        login_user(user)
-        st.session_state[
-            "verification_user_id"
-        ] = None
+                st.error(message)
 
-        st.session_state[
-            "verification_email"
-        ] = None
+                st.stop()
 
-        st.session_state[
-            "page"
-        ] = "onboarding"
+            st.success(message)
 
-        st.rerun()
+            st.session_state["is_authenticated"] = True
+
+            user = get_user_by_id(
+                st.session_state["verification_user_id"]
+            )
+
+            login_user(user)
+            st.session_state[
+                "verification_user_id"
+            ] = None
+
+            st.session_state[
+                "verification_email"
+            ] = None
+
+            st.session_state[
+                "page"
+            ] = "onboarding"
+
+            st.rerun()
