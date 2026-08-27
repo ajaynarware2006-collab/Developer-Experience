@@ -1,7 +1,7 @@
 import streamlit as st
-from backend.services.auth_service import register_user
-from backend.services.verification_service import create_email_verification
-from backend.services.email_service import send_verification_code
+
+from frontend.api.auth_api import check_user , signup_user
+
 
 def render_signup():
 
@@ -120,9 +120,12 @@ def render_signup():
                 key="signup_submit",
                 disabled=st.session_state["account_created"]
             ):
+
+                if check_user(email):
+                    st.error("An account with this email already exists.")
                 
 
-                if not name or not email:
+                elif not name or not email:
                     st.error(
                         "Please fill in all required fields."
                     )
@@ -152,24 +155,22 @@ def render_signup():
                     try:
                         
 
-                        user = register_user(
+                        user = signup_user(
                             name=name.strip(),
                             email=email.strip().lower(),
                             password=password,
                         )
-                        _, code = create_email_verification(
-                            user.id,
-                            user.email,
-                        )
+
 
                         st.session_state["verification_user_id"] = user.id
-                        st.session_state["varification_code"] = code
                         st.session_state["user_name"] = user.name
                         st.session_state["verification_email"] = user.email
 
                         st.session_state["account_created"] = True
+                            
 
                         st.session_state["page"] = "email_verification"
+                        
                         st.rerun()
 
                     except ValueError as error:

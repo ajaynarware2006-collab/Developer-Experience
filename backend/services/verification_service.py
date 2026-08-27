@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 import hashlib
 import secrets
 
+from backend.repositories.user_repository import delete_user_by_id
 from backend.repositories.email_verification_repository import (
     create_verification,
     get_latest_verification,
@@ -77,7 +78,9 @@ def verify_email_code(
 
         return False, "Too many attempts."
 
-    if datetime.utcnow() > verification.expires_at:
+    if datetime.now() > verification.expires_at:
+
+        delete_user_by_id(user_id)
 
         return False, "Verification code has expired."
 

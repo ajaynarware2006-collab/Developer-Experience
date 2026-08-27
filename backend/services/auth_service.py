@@ -30,29 +30,6 @@ def verify_password(
     )
 
 
-def register_user(
-    name: str,
-    email: str,
-    password: str,
-):
-
-    email = email.strip().lower()
-
-    existing_user = get_user_by_email(email)
-
-    if existing_user:
-        raise ValueError(
-            "An account with this email already exists."
-        )
-
-    password_hash = hash_password(password)
-
-    return create_user(
-        name.strip(),
-        email,
-        password_hash,
-    )
-
 
 def authenticate_user(
     email: str,

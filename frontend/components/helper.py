@@ -3,21 +3,13 @@ from backend.models.user import User
 
 def login_user(user: User):
 
-    st.session_state[
-        "is_authenticated"
-    ] = True
+    st.session_state["is_authenticated"] = True
 
-    st.session_state[
-        "user_id"
-    ] = user.id
+    st.session_state["user_id"] = user.id
 
-    st.session_state[
-        "user_name"
-    ] = user.name
+    st.session_state["user_name"] = user.name
 
-    st.session_state[
-        "user_email"
-    ] = user.email
+    st.session_state["user_email"] = user.email
 
 
 def logout_user():
@@ -53,6 +45,4 @@ def logout_user():
             None,
         )
 
-    st.session_state[
-        "page"
-    ] = "landing"
+    st.session_state["page"] = "landing"

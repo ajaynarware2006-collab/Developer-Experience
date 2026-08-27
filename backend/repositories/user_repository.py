@@ -1,16 +1,19 @@
-from sqlalchemy import select
+from sqlalchemy import select , delete
 
 from backend.database.connection import SessionLocal
 from backend.models.user import User
-from backend.services.verification_service import create_email_verification
-from backend.services.email_service import send_verification_code
+from backend.services.auth_service import hash_password
 
-def create_user(
+
+async def create_user(
     name: str,
     email: str,
-    password_hash: str,
+    password: str,
 ):
+    password_hash = hash_password(password)
+
     with SessionLocal() as db:
+
 
         user = User(
             name=name,
@@ -18,14 +21,22 @@ def create_user(
             password_hash=password_hash,
         )
 
-        db.add(user)
+        await db.add(user)
         db.commit()
         db.refresh(user)
 
         return user
 
 
-def get_user_by_email(email: str):
+async def delete_user_by_id(id:int):
+    with SessionLocal() as db:
+        query = delete(User).where(User.id == id)
+        result =await db.execute(query)
+        db.commit()
+
+
+
+async def get_user_by_email(email: str):
 
     with SessionLocal() as db:
 
@@ -33,12 +44,12 @@ def get_user_by_email(email: str):
             User.email == email
         )
 
-        user = db.scalar(query)
+        user =await db.scalar(query)
 
         return user
 
     
-def get_user_by_id(user_id: int):
+async def get_user_by_id(user_id: int):
 
     with SessionLocal() as db:
 
@@ -46,7 +57,7 @@ def get_user_by_id(user_id: int):
             User.id == user_id
         )
 
-        user = db.scalar(query)
+        user =await db.scalar(query)
 
         return user
 

@@ -32,7 +32,7 @@ SMTP_PASSWORD = os.getenv(
 
 def send_verification_code(
     recipient_email: str,
-    verification_code: str,
+    verification_code: str
 ):
 
     if not SMTP_EMAIL:
@@ -47,9 +47,7 @@ def send_verification_code(
 
     message = EmailMessage()
 
-    message["Subject"] = (
-        "DEV/XP Email Verification Code"
-    )
+    message["Subject"] = ("DEV/XP Email Verification Code")
 
     message["From"] = SMTP_EMAIL
 

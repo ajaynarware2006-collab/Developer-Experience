@@ -85,7 +85,7 @@ def mark_verified(
             return
 
         verification.verified_at = (
-            datetime.utcnow()
+            datetime.now()
         )
 
         db.commit()

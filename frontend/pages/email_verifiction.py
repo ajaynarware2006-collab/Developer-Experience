@@ -1,40 +1,35 @@
 import streamlit as st
+import time
 
-from backend.services.verification_service import verify_email_code 
-from backend.services.session_service import login_user
-from backend.repositories.user_repository import get_user_by_id
-from backend.services.email_service import send_verification_code
+
+from frontend.api.varification_api import verify_varification_code , send_verification_code
 
 def render_email_verification():
 
-    user_id = st.session_state.get("verification_user_id")
+    name = st.session_state.get("user_name")
 
-    code = st.session_state.get("varification_code")
+    user_id = st.session_state.get("verification_user_id")
 
     email = st.session_state.get("verification_email")
 
-    send_verification_code(
-        email,
-        code,
-    )
+    #======================================================================
 
     if not user_id or not email:
 
+        st.error("Something went wrong... User not Found")
+        time.sleep(1)
         st.session_state["page"] = "signup"
 
         st.rerun()
 
-    
-
-    
-    st.markdown(
+    #======================================================================
+    st.html(
         "<h1 style='text-align:center;'>"
         "Verify your email"
-        "</h1>",
-        unsafe_allow_html=True,
+        "</h1>"
     )
 
-    st.markdown(
+    st.html(
         f"""
         <p style="
             text-align:center;
@@ -43,9 +38,20 @@ def render_email_verification():
             We sent a verification code to
             <strong>{email}</strong>
         </p>
-        """,
-        unsafe_allow_html=True,
+        """
     )
+    if "send_verification_code" not in st.session_state:
+        st.session_state["send_verification_code"] = False
+    try:
+        if not st.session_state["send_verification_code"]:
+
+            send_verification_code(email , user_id)
+            st.session_state["send_verification_code"] = True
+
+    except Exception as e :
+        st.error(f"Email not send\n Error : {e}")
+    
+    #======================================================================
 
     _ , col , _ = st.columns([2,3,2])
 
@@ -70,11 +76,9 @@ def render_email_verification():
 
                 st.stop()
 
-            success, message = (
-                verify_email_code(
-                    user_id,
-                    code,
-                )
+            success, message = verify_varification_code(
+                user_id=user_id,
+                entered_code= code
             )
 
             if not success:
@@ -87,21 +91,16 @@ def render_email_verification():
 
             st.session_state["is_authenticated"] = True
 
-            user = get_user_by_id(
-                st.session_state["verification_user_id"]
-            )
+            st.session_state["user_id"] = user_id
 
-            login_user(user)
-            st.session_state[
-                "verification_user_id"
-            ] = None
+            st.session_state["user_name"] = name
 
-            st.session_state[
-                "verification_email"
-            ] = None
+            st.session_state["user_email"] = email
 
-            st.session_state[
-                "page"
-            ] = "onboarding"
+            st.session_state["verification_user_id"] = None
+
+            st.session_state["verification_email"] = None
+
+            st.session_state["page"] = "onboarding"
 
             st.rerun()
