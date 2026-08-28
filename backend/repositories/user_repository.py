@@ -1,16 +1,45 @@
 from sqlalchemy import select , delete
 
-from backend.database.connection import SessionLocal
+from backend.database.connection import SessionLocal 
 from backend.models.user import User
-from backend.services.auth_service import hash_password
+import bcrypt
+
+def hash_password(password: str) -> str:
+
+    password_bytes = password.encode("utf-8")
+
+    hashed = bcrypt.hashpw(
+        password_bytes,
+        bcrypt.gensalt(),
+    )
+
+    return hashed.decode("utf-8")
 
 
-async def create_user(
+def get_user_by_email(email: str):
+
+    with SessionLocal() as db:
+
+        query = select(User).where(
+            User.email == email
+        )
+
+        user = db.scalar(query)
+
+        return user
+
+
+def create_user(
     name: str,
     email: str,
     password: str,
 ):
     password_hash = hash_password(password)
+
+    user = get_user_by_email(email)
+
+    if user:
+        raise ValueError("An account with this email already exists.")
 
     with SessionLocal() as db:
 
@@ -21,35 +50,23 @@ async def create_user(
             password_hash=password_hash,
         )
 
-        await db.add(user)
+        db.add(user)
         db.commit()
         db.refresh(user)
 
         return user
 
 
-async def delete_user_by_id(id:int):
+
+def delete_user_by_id(id:int):
     with SessionLocal() as db:
         query = delete(User).where(User.id == id)
-        result =await db.execute(query)
+        result = db.execute(query)
         db.commit()
 
 
-
-async def get_user_by_email(email: str):
-
-    with SessionLocal() as db:
-
-        query = select(User).where(
-            User.email == email
-        )
-
-        user =await db.scalar(query)
-
-        return user
-
     
-async def get_user_by_id(user_id: int):
+def get_user_by_id(user_id: int):
 
     with SessionLocal() as db:
 
@@ -57,7 +74,7 @@ async def get_user_by_id(user_id: int):
             User.id == user_id
         )
 
-        user =await db.scalar(query)
+        user =db.scalar(query)
 
         return user
 

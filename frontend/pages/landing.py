@@ -1,25 +1,9 @@
 import streamlit as st
 from frontend.components.navbar import render_navbar
-from frontend.api.client import health_check
-import requests
 
 def render_landing():
 
     render_navbar()
-
-    if st.button("Test FastAPI"):
-
-        try:
-
-            result = health_check()
-
-            st.success(result["message"])
-
-        except requests.RequestException as error:
-
-            st.error(
-                f"FastAPI connection failed: {error}"
-            )
     
     # ============================================================
     # HERO

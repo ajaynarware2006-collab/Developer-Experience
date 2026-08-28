@@ -1,30 +1,38 @@
-from fastapi import APIRouter
-from backend.schemas.user import UserCreate
-from backend.repositories.user_repository import get_user_by_email ,create_user
+from fastapi import APIRouter, HTTPException
+
+from backend.schemas.user import (
+    UserCreate,
+    UserResponse,
+)
+
+from backend.repositories.user_repository import create_user
+
 
 router = APIRouter(
-    prefix="/auth",
+    prefix="/devxp",
     tags=["Authentication"],
 )
 
-@router.get("/checkuser/{email}")
-async def is_user_exists(email):
-    response = await get_user_by_email(email)
 
-    if response:
-        return True
+@router.post(
+    "/signup",
+    response_model=UserResponse,
+)
+def signup_user(data: UserCreate):
 
-    return False
+    try:
 
-@router.post("/signup")
-async def signup_user(data : UserCreate ):
-        
-        user = await create_user(data.name , data.email , data.password )
+        user = create_user(
+            name=data.name,
+            email=data.email,
+            password=data.password,
+        )
 
-        return user
+    except ValueError as error:
 
+        raise HTTPException(
+            status_code=409,
+            detail=str(error),
+        )
 
-
-
-
-
+    return user

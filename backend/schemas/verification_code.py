@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict , EmailStr
 
 
 class EmailVerificationCreate(BaseModel):
@@ -23,3 +23,12 @@ class EmailVerificationResponse(BaseModel):
     verified_at: datetime | None
     attempts: int
     created_at: datetime
+
+class SendVerificationCodeRequest(BaseModel):
+    user_id: int
+    email: EmailStr
+
+
+class VerifyCodeRequest(BaseModel):
+    user_id: int
+    code_entered: str

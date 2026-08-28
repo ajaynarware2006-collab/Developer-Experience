@@ -2,27 +2,50 @@ from dotenv import load_dotenv
 import requests
 import os
 
+
 load_dotenv()
 
 API_BASE_URL = os.getenv("API_BASE_URL")
 
-def check_user(email):
 
-    response = requests.get(f"{API_BASE_URL}/checkuser/{email}",timeout=3)
-
-    response.raise_for_status()
-
-    return response
-
-def signup_user(name , email , password):
+def signup_user(name, email, password):
 
     data = {
-        "name" : name,
-        "email" : email,
-        "password" : password,
-        }
+        "name": name,
+        "email": email,
+        "password": password,
+    }
 
-    user = requests.post(f"{API_BASE_URL}/signup",json=data)
-    
+    response = requests.post(
+        f"{API_BASE_URL}/signup",
+        json=data,
+    )
 
-    return user
+    if response.status_code == 409:
+
+        error = response.json()
+
+        raise ValueError(
+            error.get(
+                "detail",
+                "An account with this email already exists.",
+            )
+        )
+
+    if not response.ok:
+
+        try:
+            error = response.json()
+
+            message = error.get(
+                "detail",
+                "Something went wrong.",
+            )
+
+        except ValueError:
+
+            message = "Something went wrong."
+
+        raise ValueError(message)
+
+    return response.json()
