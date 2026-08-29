@@ -1,6 +1,6 @@
 import streamlit as st
-from backend.repositories.profile_repository import (
-    get_profile_by_user_id,
+from frontend.api.user_api import (
+    get_profile,
     update_profile,
 )
 
@@ -101,7 +101,7 @@ def render_profile():
     # LOAD PROFILE FROM DATABASE
     # ------------------------------------------------------------
 
-    profile = get_profile_by_user_id(
+    profile = get_profile(
         user_id
     )
 

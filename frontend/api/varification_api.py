@@ -1,11 +1,7 @@
-from dotenv import load_dotenv
-import requests
-import os
-
-
-load_dotenv()
-
-API_BASE_URL = os.getenv("API_BASE_URL")
+from frontend.api.client import (
+    api_request,
+    get_error_message,
+)
 
 
 def send_verification_code(
@@ -13,31 +9,23 @@ def send_verification_code(
     user_id: int,
 ):
 
-    data = {
-        "email": email,
-        "user_id": user_id,
-    }
-
-    response = requests.post(
-        f"{API_BASE_URL}/sendcode",
-        json=data,
+    response = api_request(
+        "POST",
+        "/devxp/sendcode",
+        json={
+            "email": email,
+            "user_id": user_id,
+        },
     )
 
     if not response.ok:
 
-        try:
-            error = response.json()
-
-            message = error.get(
-                "detail",
+        raise ValueError(
+            get_error_message(
+                response,
                 "Unable to send verification code.",
             )
-
-        except ValueError:
-
-            message = "Unable to send verification code."
-
-        raise ValueError(message)
+        )
 
     return response.json()
 
@@ -47,31 +35,23 @@ def verify_varification_code(
     entered_code: str,
 ):
 
-    data = {
-        "user_id": user_id,
-        "code_entered": entered_code,
-    }
-
-    response = requests.post(
-        f"{API_BASE_URL}/verifycode",
-        json=data,
+    response = api_request(
+        "POST",
+        "/devxp/verifycode",
+        json={
+            "user_id": user_id,
+            "code_entered": entered_code,
+        },
     )
 
     if not response.ok:
 
-        try:
-            error = response.json()
-
-            message = error.get(
-                "detail",
+        raise ValueError(
+            get_error_message(
+                response,
                 "Verification failed.",
             )
-
-        except ValueError:
-
-            message = "Verification failed."
-
-        raise ValueError(message)
+        )
 
     result = response.json()
 

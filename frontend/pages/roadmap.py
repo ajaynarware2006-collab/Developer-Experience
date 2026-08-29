@@ -1,7 +1,10 @@
 import streamlit as st
 
-from backend.services.roadmap_engine import generate_roadmap
-from backend.repositories.profile_repository import get_profile_by_user_id
+from frontend.api.user_api import get_profile
+from frontend.api.roadmap_api import (
+    get_roadmap,
+    update_task,
+)
 
 def render_roadmap():
 
@@ -10,9 +13,9 @@ def render_roadmap():
     # ============================================================
 
     user_id = st.session_state.get("user_id")
-    profile = get_profile_by_user_id(user_id)
+    profile = get_profile(user_id)
 
-    if not profile:
+    if profile is None:
 
         st.warning(
             "Developer profile not found."
@@ -22,6 +25,7 @@ def render_roadmap():
             "Go to Profile",
             type="primary",
         ):
+
             st.session_state["page"] = "profile"
             st.rerun()
 
@@ -32,7 +36,7 @@ def render_roadmap():
     # ROADMAP
     # ============================================================
 
-    roadmap_data = generate_roadmap(profile)
+    roadmap_data = get_roadmap(profile)
 
     phases = roadmap_data["phases"]
 
@@ -248,11 +252,12 @@ def render_roadmap():
 
     for phase_index, phase in enumerate(phases):
 
-        render_phase(
-            phase,
-            phase_index,
-            progress,
-        )
+        for task in phase["tasks"]:
+
+            total_tasks += 1
+
+            if task["completed"]:
+                completed_tasks += 1
 
 
     # ============================================================
@@ -302,11 +307,15 @@ def render_phase(
     progress,
 ):
 
-    topics = phase["topics"]
+    tasks = phase["tasks"]
 
-    completed = 0
+    completed = sum(
+        1
+        for task in tasks
+        if task["completed"]
+    )
 
-    for topic_index, topic in enumerate(topics):
+    for topic_index, topic in enumerate(tasks):
 
         task_id = create_task_id(
             phase_index,
@@ -317,10 +326,10 @@ def render_phase(
             completed += 1
 
 
-    if topics:
+    if tasks:
 
         phase_progress = int(
-            completed / len(topics) * 100
+            completed / len(tasks) * 100
         )
 
     else:
@@ -598,31 +607,33 @@ def render_phase(
         )
 
 
-        for topic_index, topic in enumerate(topics):
-
-            task_id = create_task_id(
-                phase_index,
-                topic_index,
-            )
-
-            checked = progress.get(
-                task_id,
-                False,
-            )
-
+        for task in tasks:
 
             new_value = st.checkbox(
-                topic,
-                value=checked,
-                key=f"task_checkbox_{task_id}",
+                task["title"],
+                value=task["completed"],
+                key=f"task_checkbox_{task['id']}",
             )
 
+            if new_value != task["completed"]:
 
-            if new_value != checked:
+                try:
 
-                progress[task_id] = new_value
+                    user_id = st.session_state.get("user_id")
 
-                st.rerun()
+                    update_task(
+                        user_id=user_id,
+                        task_id=task["id"],
+                        completed=new_value,
+                    )
+
+                    st.rerun()
+
+                except Exception as error:
+
+                    st.error(
+                        f"Unable to update task: {error}"
+                    )
 
 
         # ========================================================

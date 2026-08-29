@@ -47,7 +47,21 @@ def create_profile(
 
         db.commit()
 
-        db.refresh(profile)
+        # IMPORTANT:
+        # Re-query the profile with skills eagerly loaded.
+        statement = (
+            select(DeveloperProfile)
+            .options(
+                selectinload(
+                    DeveloperProfile.skills
+                )
+            )
+            .where(
+                DeveloperProfile.id == profile.id
+            )
+        )
+
+        profile = db.scalar(statement)
 
         return profile
 
@@ -111,9 +125,6 @@ def update_profile(
         # Remove old skills
         profile.skills.clear()
 
-        # IMPORTANT:
-        # Force SQLAlchemy to execute the DELETEs
-        # before inserting the new skills.
         db.flush()
 
         # Add new skills
@@ -132,6 +143,19 @@ def update_profile(
 
         db.commit()
 
-        db.refresh(profile)
+        # Re-query after commit so skills are fully loaded.
+        statement = (
+            select(DeveloperProfile)
+            .options(
+                selectinload(
+                    DeveloperProfile.skills
+                )
+            )
+            .where(
+                DeveloperProfile.id == profile.id
+            )
+        )
+
+        profile = db.scalar(statement)
 
         return profile

@@ -23,3 +23,8 @@ class UserResponse(BaseModel):
     email: EmailStr
     created_at: datetime
     email_verified: bool
+
+class Login(BaseModel):
+
+    email : EmailStr
+    password : str

@@ -11,7 +11,7 @@ def render_landing():
 
     st.html(
         """
-        <section class="devxp-hero">
+        <section class="devxp-hero" style = "padding-top : 100px;">
 
             <div class="devxp-eyebrow">
                 ⚡ AI-POWERED DEVELOPER GROWTH PLATFORM

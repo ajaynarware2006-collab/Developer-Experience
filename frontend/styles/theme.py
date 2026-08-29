@@ -206,7 +206,7 @@ def load_theme():
         ========================================================= */
 
         .devxp-hero {
-            min-height: 650px;
+            min-height: 550px;
 
             display: flex;
 
@@ -1450,6 +1450,72 @@ def load_theme():
             font-size: 12px;
 
             font-weight: 650;
+        }
+
+        /* =========================================================
+        LANDING NAVIGATION
+        Move navigation buttons into navbar
+        ========================================================= */
+
+        .st-key-feature-button,
+        .st-key-how-it-works-button,
+        .st-key-about-button {
+
+            position: relative;
+
+            top: -64px;
+
+            z-index: 20;
+        }
+
+
+        /* Remove Streamlit button appearance */
+
+        .st-key-feature-button button,
+        .st-key-how-it-works-button button,
+        .st-key-about-button button {
+
+            min-height: auto !important;
+
+            height: auto !important;
+
+            padding: 0 !important;
+
+            border: none !important;
+
+            background: transparent !important;
+
+            box-shadow: none !important;
+
+            color: #91A5AA !important;
+
+            font-size: 14px !important;
+
+            font-weight: 550 !important;
+
+            border-radius: 0 !important;
+
+            transition:
+                color 0.2s ease !important;
+
+        }
+
+
+        /* Hover */
+
+        .st-key-feature-button button:hover,
+        .st-key-how-it-works-button button:hover,
+        .st-key-about-button button:hover {
+
+            color: #12AAB3 !important;
+
+            border: none !important;
+
+            background: transparent !important;
+
+            box-shadow: none !important;
+
+            transform: none !important;
         }
 
         

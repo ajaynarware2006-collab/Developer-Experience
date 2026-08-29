@@ -1,9 +1,9 @@
 import streamlit as st
 
-from backend.services.roadmap_engine import generate_roadmap
+from frontend.api.user_api import get_profile
+from frontend.api.roadmap_api import get_roadmap
 from backend.services.session_service import logout_user
 from frontend.styles.dashboard_theme import load_dashboard_theme
-from backend.repositories.profile_repository import get_profile_by_user_id
 
 def render_dashboard():
 
@@ -45,7 +45,7 @@ def render_dashboard():
     # LOAD PROFILE FROM DATABASE
     # ============================================================
         
-    profile = get_profile_by_user_id(
+    profile = get_profile(
         user_id
     )
 
@@ -77,9 +77,25 @@ def render_dashboard():
     # ROADMAP DATA
     # ============================================================
 
-    roadmap = generate_roadmap(profile)
+    try:
 
-    phases = roadmap.get("phases",[],)
+        roadmap = get_roadmap(
+            user_id
+        )
+
+    except Exception as error:
+
+        st.error(
+            f"Unable to load your roadmap: {error}"
+        )
+
+        st.stop()
+
+
+    phases = roadmap.get(
+        "phases",
+        [],
+    )
 
     # ============================================================
     # CURRENT SESSION PROGRESS
@@ -95,26 +111,19 @@ def render_dashboard():
 
     completed_tasks = 0
 
-    for phase_index, phase in enumerate(phases):
+    for phase in phases:
 
-        topics = phase.get(
-            "topics",
+        tasks = phase.get(
+            "tasks",
             [],
         )
 
-        for topic_index, topic in enumerate(
-            topics
-        ):
-
-            task_id = (
-                f"phase_{phase_index}"
-                f"_task_{topic_index}"
-            )
+        for task in tasks:
 
             total_tasks += 1
 
-            if progress.get(
-                task_id,
+            if task.get(
+                "completed",
                 False,
             ):
 

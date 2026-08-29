@@ -1,12 +1,9 @@
 import streamlit as st
 
-from backend.services.auth_service import authenticate_user
-from backend.services.session_service import login_user
-from backend.repositories.profile_repository import (
-    get_profile_by_user_id,
-)
-from backend.services.verification_service import create_email_verification
-from backend.services.email_service import send_verification_code
+from frontend.api.varification_api import send_verification_code
+from frontend.api.login_api import authenticate_user_api
+from frontend.api.user_api import get_profile
+
 
 
 def render_login():
@@ -134,7 +131,7 @@ def render_login():
 
                     st.session_state["account_created"] = True
                     
-                    user = authenticate_user(
+                    user = authenticate_user_api(
                         email=email,
                         password=password,
                     )
@@ -151,20 +148,13 @@ def render_login():
                     # CREATE SESSION
                     # --------------------------------------------
 
-                    if not user.email_verified:
+                    if not user["email_verified"]:
 
-                        _, code = create_email_verification(
-                            user.id,
-                            user.email,
-                        )
+                        send_verification_code(email=user["email"] , user_id= user["id"])
+                        st.session_state["send_verification_code"] = True
 
-                        send_verification_code(
-                            user.email,
-                            code,
-                        )
-
-                        st.session_state["verification_user_id"] = user.id
-                        st.session_state["verification_email"] = user.email
+                        st.session_state["verification_user_id"] = user["id"]
+                        st.session_state["verification_email"] = user["email"]
                         st.session_state["page"] = "email_verification"
 
                         st.warning(
@@ -174,14 +164,17 @@ def render_login():
                         st.rerun()
 
 
-                    login_user(user)
+                    st.session_state["is_authenticated"] = True
+                    st.session_state["user_id"] = user["id"]
+                    st.session_state["user_name"] = user["name"]
+                    st.session_state["user_email"] = user["email"]
 
                     # --------------------------------------------
                     # LOAD PROFILE FROM DATABASE
                     # --------------------------------------------
 
-                    profile = get_profile_by_user_id(
-                        user.id
+                    profile = get_profile(
+                        user["id"]
                     )
 
                     if profile is None:

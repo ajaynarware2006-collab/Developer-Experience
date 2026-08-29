@@ -1,4 +1,5 @@
 from sqlalchemy import select , delete
+from sqlalchemy.exc import IntegrityError
 
 from backend.database.connection import SessionLocal 
 from backend.models.user import User
@@ -34,24 +35,33 @@ def create_user(
     email: str,
     password: str,
 ):
-    password_hash = hash_password(password)
 
-    user = get_user_by_email(email)
-
-    if user:
-        raise ValueError("An account with this email already exists.")
+    password_hash = hash_password(
+        password
+    )
 
     with SessionLocal() as db:
 
-
         user = User(
-            name=name,
-            email=email,
+            name=name.strip(),
+            email=email.strip().lower(),
             password_hash=password_hash,
         )
 
         db.add(user)
-        db.commit()
+
+        try:
+
+            db.commit()
+
+        except IntegrityError:
+
+            db.rollback()
+
+            raise ValueError(
+                "An account with this email already exists."
+            )
+
         db.refresh(user)
 
         return user

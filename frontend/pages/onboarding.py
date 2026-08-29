@@ -1,7 +1,5 @@
 import streamlit as st
-from backend.repositories.profile_repository import (
-    create_profile
-)
+from frontend.api.user_api import create_profile
 
 def render_onboarding():
 
