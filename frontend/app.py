@@ -2,6 +2,8 @@ import streamlit as st
 
 from frontend.styles.theme import load_theme
 
+from frontend.components.helper import get_current_page
+
 from frontend.pages.landing import render_landing
 from frontend.pages.login import render_login
 from frontend.pages.signup import render_signup
@@ -31,8 +33,7 @@ st.set_page_config(
 # ============================================================
 
 if "page" not in st.session_state:
-
-    st.session_state["page"] = "landing"
+    st.session_state["page"] = get_current_page()
 
 
 if "is_authenticated" not in st.session_state:

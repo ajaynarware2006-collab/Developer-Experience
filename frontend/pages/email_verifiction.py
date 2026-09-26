@@ -19,6 +19,7 @@ def render_email_verification():
         st.error("Something went wrong... User not Found")
         time.sleep(1)
         st.session_state["page"] = "signup"
+        st.query_params["page"] = "signup"
 
         st.rerun()
 
@@ -102,5 +103,6 @@ def render_email_verification():
             st.session_state["verification_email"] = None
 
             st.session_state["page"] = "onboarding"
+            st.query_params["page"] = "onbording"
 
             st.rerun()

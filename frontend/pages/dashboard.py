@@ -24,6 +24,7 @@ def render_dashboard():
     if not user_id:
 
         st.session_state["page"] = "login"
+        st.query_params["page"] = "login"
 
         st.rerun()
 
@@ -51,13 +52,10 @@ def render_dashboard():
 
     if profile is None:
 
-        st.session_state[
-            "onboarding_complete"
-        ] = False
+        st.session_state["onboarding_complete"] = False
 
-        st.session_state[
-            "page"
-        ] = "onboarding"
+        st.session_state["page"] = "onboarding"
+        st.query_params["page"] = "onboarding"
 
         st.rerun()
 
@@ -79,9 +77,7 @@ def render_dashboard():
 
     try:
 
-        roadmap = get_roadmap(
-            user_id
-        )
+        roadmap = get_roadmap(user_id)
 
     except Exception as error:
 
@@ -251,6 +247,7 @@ def render_dashboard():
             ):
 
                 st.session_state["page"] = "profile"
+                st.query_params["page"] = "profile"
 
                 st.rerun()
 
@@ -680,6 +677,7 @@ def render_dashboard():
                 ):
 
                     st.session_state["page"] = "roadmap"
+                    st.query_params["page"] = "roadmap"
 
                     st.rerun()
 
@@ -805,6 +803,7 @@ def render_dashboard():
                 ):
 
                     st.session_state["page"] = "profile"
+                    st.query_params["page"] = "profile"
 
                     st.rerun()
 

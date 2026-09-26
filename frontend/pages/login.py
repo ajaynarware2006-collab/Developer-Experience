@@ -22,6 +22,7 @@ def render_login():
         ):
 
             st.session_state["page"] = "landing"
+            st.query_params["page"] = "landing"
 
             st.rerun()
 
@@ -156,6 +157,7 @@ def render_login():
                         st.session_state["verification_user_id"] = user["id"]
                         st.session_state["verification_email"] = user["email"]
                         st.session_state["page"] = "email_verification"
+                        st.query_params["page"] = "email_verification"
 
                         st.warning(
                             "Your email is not verified. A new verification code has been sent."
@@ -304,5 +306,6 @@ def render_login():
             ):
 
                 st.session_state["page"] = "signup"
+                st.query_params["page"] = "signup"
 
                 st.rerun()

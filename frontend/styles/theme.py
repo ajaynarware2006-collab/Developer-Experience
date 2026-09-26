@@ -48,6 +48,7 @@ def load_theme():
 
             color: #F4F7F5;
         }
+        
 
 
         /* =========================================================
@@ -206,7 +207,7 @@ def load_theme():
         ========================================================= */
 
         .devxp-hero {
-            min-height: 550px;
+            min-height: 400px;
 
             display: flex;
 
@@ -217,7 +218,7 @@ def load_theme():
             justify-content: center;
 
             padding:
-                80px 20px 55px;
+                40px 20px 55px;
 
             text-align: center;
         }
@@ -1517,6 +1518,8 @@ def load_theme():
 
             transform: none !important;
         }
+
+        
 
         
 

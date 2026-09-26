@@ -27,6 +27,7 @@ def render_roadmap():
         ):
 
             st.session_state["page"] = "profile"
+            st.query_params["page"] = "profile"
             st.rerun()
 
         return
@@ -36,7 +37,8 @@ def render_roadmap():
     # ROADMAP
     # ============================================================
 
-    roadmap_data = get_roadmap(profile)
+    roadmap_data = get_roadmap(user_id)
+    st.markdown(roadmap_data)
 
     phases = roadmap_data["phases"]
 
@@ -294,6 +296,7 @@ def render_roadmap():
         ):
 
             st.session_state["page"] = "profile"
+            st.query_params["page"] = "profile"
             st.rerun()
 
 

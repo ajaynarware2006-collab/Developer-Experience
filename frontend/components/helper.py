@@ -12,6 +12,15 @@ def login_user(user: User):
     st.session_state["user_email"] = user.email
 
 
+def get_current_page():
+    page = st.query_params.get("page")
+
+    if page:
+        return page
+
+    return "landing"
+
+
 def logout_user():
 
     keys_to_remove = [

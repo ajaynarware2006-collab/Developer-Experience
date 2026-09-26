@@ -11,7 +11,7 @@ def render_landing():
 
     st.html(
         """
-        <section class="devxp-hero" style = "padding-top : 100px;">
+        <section class="devxp-hero" style = "padding-top : 40px;">
 
             <div class="devxp-eyebrow">
                 ⚡ AI-POWERED DEVELOPER GROWTH PLATFORM
@@ -65,6 +65,7 @@ def render_landing():
         ):
 
             st.session_state["page"] = "signup"
+            st.query_params["page"] = "signup"
 
             st.rerun()
 
@@ -82,6 +83,7 @@ def render_landing():
         ):
 
             st.session_state["page"] = "login"
+            st.query_params["page"] = "login"
 
             st.rerun()
 

@@ -107,16 +107,10 @@ def serialize_roadmap(
 # GET ROADMAP
 # =================================================================
 
-@roadmap_router.get(
-    "/{user_id}"
-)
-def get_roadmap(
-    user_id: int,
-):
+@roadmap_router.get("/{user_id}")
+def get_roadmap(user_id: int,):
 
-    profile = get_profile_by_user_id(
-        user_id
-    )
+    profile = get_profile_by_user_id(user_id)
 
     if profile is None:
 

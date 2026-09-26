@@ -94,6 +94,7 @@ def render_profile():
     if not user_id:
 
         st.session_state["page"] = "login"
+        st.query_params["page"] = "login"
 
         st.rerun()
 
@@ -467,6 +468,8 @@ def render_profile_view(data):
                 ):
 
                     st.session_state["page"] = "dashboard"
+                    st.query_params["page"] = "dashboard"
+
                     st.rerun()
 
 

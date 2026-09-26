@@ -17,6 +17,8 @@ def render_signup():
             key="signup_back",
         ):
             st.session_state["page"] = "landing"
+            st.query_params["page"] = "landing"
+
             st.rerun()
 
 
@@ -161,6 +163,7 @@ def render_signup():
 
                         st.session_state["account_created"] = True
                         st.session_state["page"] = "email_verification"
+                        st.query_params["page"] = "email_verification"
 
                         st.rerun()
 
@@ -266,4 +269,6 @@ def render_signup():
             ):
 
                 st.session_state["page"] = "login"
+                st.query_params["page"] = "login"
+                
                 st.rerun()

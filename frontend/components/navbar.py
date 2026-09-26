@@ -111,6 +111,7 @@ def render_navbar():
         ):
 
             st.session_state["page"] = "features"
+            st.query_params["page"] = "features"
             st.rerun()
 
 
@@ -122,6 +123,7 @@ def render_navbar():
         ):
 
             st.session_state["page"] = "how_it_work"
+            st.query_params["page"] = "how_it_work"
             st.rerun()
 
 
@@ -133,4 +135,5 @@ def render_navbar():
         ):
 
             st.session_state["page"] = "about"
+            st.query_params["page"] = "about"
             st.rerun()

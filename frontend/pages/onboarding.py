@@ -10,6 +10,7 @@ def render_onboarding():
     if not user_id:
 
         st.session_state["page"] = "login"
+        st.query_params["page"] = "login"
 
         st.rerun()
 

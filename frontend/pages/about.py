@@ -791,5 +791,6 @@ def render_about():
     ):
 
         st.session_state["page"] = "signup"
+        st.query_params["page"] = "signup"
 
         st.rerun()
