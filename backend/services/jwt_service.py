@@ -32,8 +32,6 @@ def create_access_token(user_id: int) -> str:
 
     return token
 
-print(create_access_token(42))
-
 def verify_access_token(token : str) -> dict:
 
     try:
@@ -46,5 +44,3 @@ def verify_access_token(token : str) -> dict:
         return payload
     except InvalidTokenError:
         raise ValueError("Invalid or expired token")
-
-print(verify_access_token(create_access_token(42)))
