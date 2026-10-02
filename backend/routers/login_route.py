@@ -1,31 +1,75 @@
-from fastapi import APIRouter, HTTPException , Response
+from fastapi import (
+    APIRouter,
+    Depends,
+    HTTPException,
+    Response,
+)
 
-from backend.services.auth_service import authenticate_user , get_current_user
-from backend.schemas.user import Login, UserResponse
-from backend.services.jwt_service import create_access_token
+from backend.services.auth_service import (
+    authenticate_user,
+    get_current_user,
+)
+
+from backend.services.jwt_service import (
+    create_access_token,
+)
+
+from backend.repositories.user_repository import (
+    get_user_by_id,
+)
+
+from backend.schemas.user import (
+    Login,
+    UserResponse,
+)
+
 
 login_route = APIRouter(
     prefix="/devxp",
     tags=["Login"],
 )
 
-from fastapi import Depends
 
+# ============================================================
+# GET CURRENT USER
+# ============================================================
 
-@login_route.get("/me")
+@login_route.get(
+    "/me",
+    response_model=UserResponse,
+)
 def get_me(
-    user_id: int = Depends(get_current_user)
+    user_id: int = Depends(
+        get_current_user
+    ),
 ):
-    return {
-        "message": "You are logged in",
-        "user_id": user_id
-    }
+
+    user = get_user_by_id(
+        user_id
+    )
+
+    if user is None:
+
+        raise HTTPException(
+            status_code=404,
+            detail="User not found.",
+        )
+
+    return user
+
+
+# ============================================================
+# LOGIN
+# ============================================================
 
 @login_route.post(
     "/authenticate_user",
-    response_model=UserResponse)
+    response_model=UserResponse,
+)
 def authenticate_user_route(
-    userlogin: Login,response : Response):
+    userlogin: Login,
+    response: Response,
+):
 
     user = authenticate_user(
         userlogin.email,
@@ -38,8 +82,10 @@ def authenticate_user_route(
             status_code=401,
             detail="Invalid email or password.",
         )
-    
-    token = create_access_token(user.id)
+
+    token = create_access_token(
+        user.id
+    )
 
     response.set_cookie(
         key="access_token",
@@ -47,7 +93,28 @@ def authenticate_user_route(
         httponly=True,
         secure=False,
         samesite="lax",
-        max_age=60 * 60
+        max_age=60 * 60,
+        path="/",
     )
 
     return user
+
+
+# ============================================================
+# LOGOUT
+# ============================================================
+
+@login_route.post("/logout")
+def logout(
+    response: Response,
+):
+
+    response.delete_cookie(
+        key="access_token",
+        path="/",
+    )
+
+    return {
+        "success": True,
+        "message": "Logged out successfully.",
+    }

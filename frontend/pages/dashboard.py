@@ -2,7 +2,7 @@ import streamlit as st
 
 from frontend.api.user_api import get_profile
 from frontend.api.roadmap_api import get_roadmap
-from backend.services.session_service import logout_user
+from frontend.components.helper import logout_user
 from frontend.styles.dashboard_theme import load_dashboard_theme
 
 def render_dashboard():

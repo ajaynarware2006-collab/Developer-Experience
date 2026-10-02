@@ -2,12 +2,17 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import os
 
+from dotenv import load_dotenv
+
 from backend.routers.auth_route import router as auth_router
 from backend.routers.login_route import login_route
 from backend.routers.verification_route import verification_router
 from backend.routers.profile_route import profile_router
 from backend.routers.roadmap_route import roadmap_router
 from backend.routers.dashboard_route import dashboard_router
+
+
+load_dotenv()
 
 
 app = FastAPI(
@@ -21,19 +26,32 @@ app = FastAPI(
 # CORS
 # ============================================================
 
-frontend_url = os.getenv(
-    "FRONTEND_URL",
-    "http://localhost:8501",
+frontend_urls = os.getenv(
+    "FRONTEND_URLS",
+    "http://localhost:3000",
 )
+
+allowed_origins = [
+    url.strip()
+    for url in frontend_urls.split(",")
+    if url.strip()
+]
+
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        frontend_url,
-    ],
+
+    allow_origins=allowed_origins,
+
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+
+    allow_methods=[
+        "*"
+    ],
+
+    allow_headers=[
+        "*"
+    ],
 )
 
 
