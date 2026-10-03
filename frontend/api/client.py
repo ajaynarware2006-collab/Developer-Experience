@@ -8,15 +8,12 @@ load_dotenv()
 
 
 API_BASE_URL = os.getenv(
-    "API_BASE_URL"
+    "API_BASE_URL",
+    "http://127.0.0.1:8000",
 )
 
 
-if not API_BASE_URL:
-
-    raise RuntimeError(
-        "API_BASE_URL is not configured."
-    )
+session = requests.Session()
 
 
 def api_request(
@@ -30,7 +27,7 @@ def api_request(
         f"/{endpoint.lstrip('/')}"
     )
 
-    response = requests.request(
+    response = session.request(
         method,
         url,
         timeout=30,
@@ -38,6 +35,54 @@ def api_request(
     )
 
     return response
+
+
+def get(
+    endpoint: str,
+    **kwargs,
+):
+
+    return api_request(
+        "GET",
+        endpoint,
+        **kwargs,
+    )
+
+
+def post(
+    endpoint: str,
+    **kwargs,
+):
+
+    return api_request(
+        "POST",
+        endpoint,
+        **kwargs,
+    )
+
+
+def put(
+    endpoint: str,
+    **kwargs,
+):
+
+    return api_request(
+        "PUT",
+        endpoint,
+        **kwargs,
+    )
+
+
+def delete(
+    endpoint: str,
+    **kwargs,
+):
+
+    return api_request(
+        "DELETE",
+        endpoint,
+        **kwargs,
+    )
 
 
 def get_error_message(

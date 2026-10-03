@@ -4,6 +4,7 @@ import os
 
 from dotenv import load_dotenv
 
+from backend.routers.github_route import router as github_router
 from backend.routers.auth_route import router as auth_router
 from backend.routers.login_route import login_route
 from backend.routers.verification_route import verification_router
@@ -65,7 +66,7 @@ app.include_router(verification_router)
 app.include_router(profile_router)
 app.include_router(roadmap_router)
 app.include_router(dashboard_router)
-
+app.include_router(github_router)
 
 # ============================================================
 # HEALTH

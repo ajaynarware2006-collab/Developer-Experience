@@ -1,5 +1,6 @@
 import streamlit as st
 
+from frontend.api.github_api import get_github_stats
 from frontend.api.user_api import get_profile
 from frontend.api.roadmap_api import get_roadmap
 from frontend.components.helper import logout_user
@@ -894,3 +895,32 @@ def render_dashboard():
                     </div>
                     """
                 )
+
+                github_stats = get_github_stats()
+
+                if github_stats:
+
+                    st.write(
+                        "GitHub Username:",
+                        github_stats["username"],
+                    )
+
+                    st.write(
+                        "Repositories:",
+                        github_stats["repository_count"],
+                    )
+
+                    st.write(
+                        "Total Commits:",
+                        github_stats["total_commits"],
+                    )
+
+                    st.write(
+                        "Total Contributions:",
+                        github_stats["total_contributions"],
+                    )
+
+                    st.write(
+                        "Last Commit:",
+                        github_stats["last_commit_at"],
+                    )

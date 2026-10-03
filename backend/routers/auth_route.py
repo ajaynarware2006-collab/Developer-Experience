@@ -4,15 +4,27 @@ from urllib.parse import urlencode
 
 import requests
 from dotenv import load_dotenv
-from fastapi import APIRouter, HTTPException, Response, Request
+
+from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import RedirectResponse
 
 from backend.repositories.user_repository import (
     create_user,
     get_user_by_email,
+    get_user_by_github_id,
+    get_user_by_google_id,
+    update_github_data,
+    update_google_data,
 )
-from backend.schemas.user import UserCreate, UserResponse
-from backend.services.jwt_service import create_access_token
+
+from backend.schemas.user import (
+    UserCreate,
+    UserResponse,
+)
+
+from backend.services.jwt_service import (
+    create_access_token,
+)
 
 
 load_dotenv()
@@ -26,33 +38,42 @@ router = APIRouter(
 
 FRONTEND_URL = os.getenv(
     "FRONTEND_URL",
-    "http://localhost:3000",
+    "http://localhost:8501",
 )
 
-GITHUB_CLIENT_ID = os.getenv("GITHUB_CLIENT_ID")
-GITHUB_CLIENT_SECRET = os.getenv("GITHUB_CLIENT_SECRET")
+
+# ============================================================
+# GITHUB CONFIG
+# ============================================================
+
+GITHUB_CLIENT_ID = os.getenv(
+    "GITHUB_CLIENT_ID"
+)
+
+GITHUB_CLIENT_SECRET = os.getenv(
+    "GITHUB_CLIENT_SECRET"
+)
+
 GITHUB_REDIRECT_URI = os.getenv(
-    "GITHUB_REDIRECT_URI",
+    "GITHUB_REDIRECT_URI"
 )
 
 
 # ============================================================
-# COOKIE
+# GOOGLE CONFIG
 # ============================================================
 
-def set_auth_cookie(
-    response: Response,
-    token: str,
-):
-    response.set_cookie(
-        key="access_token",
-        value=token,
-        httponly=True,
-        secure=False,
-        samesite="lax",
-        max_age=60 * 60,
-        path="/",
-    )
+GOOGLE_CLIENT_ID = os.getenv(
+    "GOOGLE_CLIENT_ID"
+)
+
+GOOGLE_CLIENT_SECRET = os.getenv(
+    "GOOGLE_CLIENT_SECRET"
+)
+
+GOOGLE_REDIRECT_URI = os.getenv(
+    "GOOGLE_REDIRECT_URI"
+)
 
 
 # ============================================================
@@ -63,7 +84,9 @@ def set_auth_cookie(
     "/signup",
     response_model=UserResponse,
 )
-def signup_user(data: UserCreate):
+def signup_user(
+    data: UserCreate,
+):
 
     try:
 
@@ -88,11 +111,10 @@ def signup_user(data: UserCreate):
 # ============================================================
 
 @router.get("/auth/github")
-def github_login(
-    response: Response,
-):
+def github_login():
 
     if not GITHUB_CLIENT_ID:
+
         raise HTTPException(
             status_code=500,
             detail="GITHUB_CLIENT_ID is not configured.",
@@ -112,12 +134,12 @@ def github_login(
         + urlencode(params)
     )
 
-    redirect_response = RedirectResponse(
-        url=github_url,
+    response = RedirectResponse(
+        github_url,
         status_code=302,
     )
 
-    redirect_response.set_cookie(
+    response.set_cookie(
         key="github_oauth_state",
         value=state,
         httponly=True,
@@ -127,7 +149,7 @@ def github_login(
         path="/",
     )
 
-    return redirect_response
+    return response
 
 
 # ============================================================
@@ -145,28 +167,30 @@ def github_callback(
         "github_oauth_state"
     )
 
-    if not saved_state or saved_state != state:
+    if (
+        not saved_state
+        or saved_state != state
+    ):
 
         raise HTTPException(
             status_code=400,
-            detail="Invalid OAuth state.",
+            detail="Invalid GitHub OAuth state.",
         )
-
-    # --------------------------------------------------------
-    # Exchange code for GitHub access token
-    # --------------------------------------------------------
 
     token_response = requests.post(
         "https://github.com/login/oauth/access_token",
+
         headers={
             "Accept": "application/json",
         },
+
         data={
             "client_id": GITHUB_CLIENT_ID,
             "client_secret": GITHUB_CLIENT_SECRET,
             "code": code,
             "redirect_uri": GITHUB_REDIRECT_URI,
         },
+
         timeout=15,
     )
 
@@ -194,38 +218,50 @@ def github_callback(
         "Authorization": (
             f"Bearer {github_access_token}"
         ),
-        "Accept": "application/vnd.github+json",
+        "Accept": (
+            "application/vnd.github+json"
+        ),
         "X-GitHub-Api-Version": "2022-11-28",
     }
 
-    # --------------------------------------------------------
-    # Get GitHub user
-    # --------------------------------------------------------
-
-    github_user_response = requests.get(
+    github_response = requests.get(
         "https://api.github.com/user",
         headers=github_headers,
         timeout=15,
     )
 
-    if github_user_response.status_code != 200:
+    if github_response.status_code != 200:
 
         raise HTTPException(
             status_code=400,
             detail="Failed to get GitHub user.",
         )
 
-    github_user = github_user_response.json()
+    github_user = github_response.json()
+
+    github_id = str(
+        github_user.get("id")
+    )
+
+    github_username = github_user.get(
+        "login"
+    )
 
     github_name = (
         github_user.get("name")
-        or github_user.get("login")
+        or github_username
     )
 
-    github_email = github_user.get("email")
+    github_avatar_url = github_user.get(
+        "avatar_url"
+    )
+
+    github_email = github_user.get(
+        "email"
+    )
 
     # --------------------------------------------------------
-    # Get verified/private email if public email is unavailable
+    # GET VERIFIED EMAIL
     # --------------------------------------------------------
 
     if not github_email:
@@ -240,88 +276,350 @@ def github_callback(
 
             emails = email_response.json()
 
-            verified_emails = [
-                item["email"]
-                for item in emails
-                if item.get("verified") is True
-            ]
+            for email_data in emails:
 
-            if verified_emails:
-                github_email = verified_emails[0]
+                if email_data.get("verified"):
+
+                    github_email = email_data.get(
+                        "email"
+                    )
+
+                    break
 
     if not github_email:
 
         raise HTTPException(
             status_code=400,
             detail=(
-                "No verified email found on your GitHub account."
+                "No verified email found "
+                "on your GitHub account."
             ),
         )
 
-    github_email = github_email.strip().lower()
-
-    # --------------------------------------------------------
-    # Find existing account
-    # --------------------------------------------------------
-
-    user = get_user_by_email(
-        github_email
+    github_email = (
+        github_email.strip().lower()
     )
 
     # --------------------------------------------------------
-    # Create account if it doesn't exist
+    # FIND USER
     # --------------------------------------------------------
+
+    user = get_user_by_github_id(
+        github_id
+    )
 
     if not user:
 
-        random_password = secrets.token_urlsafe(32)
+        user = get_user_by_email(
+            github_email
+        )
 
-        try:
+        if user:
+
+            user = update_github_data(
+                user_id=user.id,
+                github_id=github_id,
+                github_username=github_username,
+                github_avatar_url=github_avatar_url,
+                github_access_token=github_access_token,
+            )
+
+        else:
+
+            random_password = (
+                secrets.token_urlsafe(32)
+            )
 
             user = create_user(
                 name=github_name,
                 email=github_email,
                 password=random_password,
+                github_id=github_id,
+                github_username=github_username,
+                github_avatar_url=github_avatar_url,
+                github_access_token=github_access_token,
             )
 
-        except ValueError:
+    else:
 
-            user = get_user_by_email(
-                github_email
-            )
-
-            if not user:
-
-                raise HTTPException(
-                    status_code=409,
-                    detail="Unable to create GitHub account.",
-                )
+        user = update_github_data(
+            user_id=user.id,
+            github_id=github_id,
+            github_username=github_username,
+            github_avatar_url=github_avatar_url,
+            github_access_token=github_access_token,
+        )
 
     # --------------------------------------------------------
-    # Create DEV/XP JWT
+    # CREATE DEVXP JWT
     # --------------------------------------------------------
 
     access_token = create_access_token(
         user.id
     )
 
-    # --------------------------------------------------------
-    # Redirect to React
-    # --------------------------------------------------------
-
-    redirect_response = RedirectResponse(
-        url=f"{FRONTEND_URL}/",
+    response = RedirectResponse(
+        url=FRONTEND_URL,
         status_code=302,
     )
 
-    set_auth_cookie(
-        redirect_response,
-        access_token,
+    response.set_cookie(
+        key="access_token",
+        value=access_token,
+        httponly=True,
+        secure=False,
+        samesite="lax",
+        max_age=60 * 60,
+        path="/",
     )
 
-    redirect_response.delete_cookie(
+    response.delete_cookie(
         key="github_oauth_state",
         path="/",
     )
 
-    return redirect_response
+    return response
+
+
+# ============================================================
+# GOOGLE LOGIN
+# ============================================================
+
+@router.get("/auth/google")
+def google_login():
+
+    if not GOOGLE_CLIENT_ID:
+
+        raise HTTPException(
+            status_code=500,
+            detail="GOOGLE_CLIENT_ID is not configured.",
+        )
+
+    state = secrets.token_urlsafe(32)
+
+    params = {
+        "client_id": GOOGLE_CLIENT_ID,
+        "redirect_uri": GOOGLE_REDIRECT_URI,
+        "response_type": "code",
+        "scope": "openid email profile",
+        "access_type": "online",
+        "state": state,
+        "prompt": "select_account",
+    }
+
+    google_url = (
+        "https://accounts.google.com/o/oauth2/v2/auth?"
+        + urlencode(params)
+    )
+
+    response = RedirectResponse(
+        google_url,
+        status_code=302,
+    )
+
+    response.set_cookie(
+        key="google_oauth_state",
+        value=state,
+        httponly=True,
+        secure=False,
+        samesite="lax",
+        max_age=600,
+        path="/",
+    )
+
+    return response
+
+
+# ============================================================
+# GOOGLE CALLBACK
+# ============================================================
+
+@router.get("/auth/google/callback")
+def google_callback(
+    code: str,
+    state: str,
+    request: Request,
+):
+
+    saved_state = request.cookies.get(
+        "google_oauth_state"
+    )
+
+    if (
+        not saved_state
+        or saved_state != state
+    ):
+
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid Google OAuth state.",
+        )
+
+    # --------------------------------------------------------
+    # EXCHANGE CODE FOR GOOGLE ACCESS TOKEN
+    # --------------------------------------------------------
+
+    token_response = requests.post(
+        "https://oauth2.googleapis.com/token",
+
+        data={
+            "client_id": GOOGLE_CLIENT_ID,
+            "client_secret": GOOGLE_CLIENT_SECRET,
+            "code": code,
+            "redirect_uri": GOOGLE_REDIRECT_URI,
+            "grant_type": "authorization_code",
+        },
+
+        timeout=15,
+    )
+
+    if token_response.status_code != 200:
+
+        raise HTTPException(
+            status_code=400,
+            detail="Failed to exchange Google authorization code.",
+        )
+
+    token_data = token_response.json()
+
+    google_access_token = token_data.get(
+        "access_token"
+    )
+
+    if not google_access_token:
+
+        raise HTTPException(
+            status_code=400,
+            detail="Google access token was not returned.",
+        )
+
+    # --------------------------------------------------------
+    # GET GOOGLE USER
+    # --------------------------------------------------------
+
+    google_response = requests.get(
+        "https://www.googleapis.com/oauth2/v2/userinfo",
+
+        headers={
+            "Authorization": (
+                f"Bearer {google_access_token}"
+            )
+        },
+
+        timeout=15,
+    )
+
+    if google_response.status_code != 200:
+
+        raise HTTPException(
+            status_code=400,
+            detail="Failed to get Google user.",
+        )
+
+    google_user = google_response.json()
+
+    google_id = google_user.get(
+        "id"
+    )
+
+    google_email = google_user.get(
+        "email"
+    )
+
+    google_name = (
+        google_user.get("name")
+        or google_email.split("@")[0]
+    )
+
+    google_avatar_url = google_user.get(
+        "picture"
+    )
+
+    if not google_id or not google_email:
+
+        raise HTTPException(
+            status_code=400,
+            detail="Google account information is incomplete.",
+        )
+
+    google_email = (
+        google_email.strip().lower()
+    )
+
+    # --------------------------------------------------------
+    # FIND USER BY GOOGLE ID
+    # --------------------------------------------------------
+
+    user = get_user_by_google_id(
+        google_id
+    )
+
+    # --------------------------------------------------------
+    # FIND BY EMAIL IF GOOGLE ID NOT FOUND
+    # --------------------------------------------------------
+
+    if not user:
+
+        user = get_user_by_email(
+            google_email
+        )
+
+        # ----------------------------------------------------
+        # EXISTING DEVXP ACCOUNT
+        # ----------------------------------------------------
+
+        if user:
+
+            user = update_google_data(
+                user_id=user.id,
+                google_id=google_id,
+                google_avatar_url=google_avatar_url,
+            )
+
+        # ----------------------------------------------------
+        # NEW DEVXP ACCOUNT
+        # ----------------------------------------------------
+
+        else:
+
+            random_password = (
+                secrets.token_urlsafe(32)
+            )
+
+            user = create_user(
+                name=google_name,
+                email=google_email,
+                password=random_password,
+                google_id=google_id,
+                google_avatar_url=google_avatar_url,
+            )
+
+    # --------------------------------------------------------
+    # CREATE DEVXP JWT
+    # --------------------------------------------------------
+
+    access_token = create_access_token(
+        user.id
+    )
+
+    response = RedirectResponse(
+        url=FRONTEND_URL,
+        status_code=302,
+    )
+
+    response.set_cookie(
+        key="access_token",
+        value=access_token,
+        httponly=True,
+        secure=False,
+        samesite="lax",
+        max_age=60 * 60,
+        path="/",
+    )
+
+    response.delete_cookie(
+        key="google_oauth_state",
+        path="/",
+    )
+
+    return response

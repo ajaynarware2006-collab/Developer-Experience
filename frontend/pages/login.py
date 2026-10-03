@@ -5,6 +5,25 @@ from frontend.api.login_api import authenticate_user_api
 from frontend.api.user_api import get_profile
 
 
+BACKEND_URL = "http://127.0.0.1:8000"
+
+
+def github_login():
+
+    st.link_button(
+        "Continue with GitHub",
+        "http://127.0.0.1:8000/devxp/auth/github",
+        use_container_width=True,
+    )
+
+
+def google_login():
+
+    st.link_button(
+        "Continue with Google",
+        "http://127.0.0.1:8000/devxp/auth/google",
+        use_container_width=True,
+    )
 
 def render_login():
 
@@ -266,26 +285,18 @@ def render_login():
             )
 
             # ----------------------------------------------------
-            # SOCIAL LOGIN PLACEHOLDERS
+            # SOCIAL LOGINS
             # ----------------------------------------------------
 
             google_col, github_col = st.columns(2)
 
             with google_col:
 
-                st.button(
-                    "Google",
-                    use_container_width=True,
-                    key="login_google",
-                )
+                google_login()
 
             with github_col:
 
-                st.button(
-                    "GitHub",
-                    use_container_width=True,
-                    key="login_github",
-                )
+                github_login()
 
             # ----------------------------------------------------
             # SIGNUP
