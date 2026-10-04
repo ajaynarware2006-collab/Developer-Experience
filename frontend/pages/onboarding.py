@@ -649,14 +649,10 @@ def render_onboarding():
                         #     None,
                         # )
 
-                        st.session_state.pop(
-                            "onboarding_step",
-                            None,
-                        )
+                        st.session_state.pop("onboarding_step",None,)
 
-                        st.session_state[
-                            "page"
-                        ] = "profile"
+                        st.session_state["page"] = "profile"
+                        st.query_params["page"] = "profile"
 
                         st.rerun()
 

@@ -359,7 +359,11 @@ def github_callback(
     )
 
     response = RedirectResponse(
-        url=FRONTEND_URL,
+        url=(
+            f"{FRONTEND_URL}"
+            f"?page=dashboard"
+            f"&auth_token={access_token}"
+        ),
         status_code=302,
     )
 
@@ -603,7 +607,11 @@ def google_callback(
     )
 
     response = RedirectResponse(
-        url=FRONTEND_URL,
+        url=(
+            f"{FRONTEND_URL}"
+            f"?page=dashboard"
+            f"&auth_token={access_token}"
+        ),
         status_code=302,
     )
 

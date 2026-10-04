@@ -1,13 +1,21 @@
+from fastapi import (
+    Cookie,
+    Header,
+    HTTPException,
+    status,
+)
+
+import bcrypt
+
 from backend.repositories.user_repository import (
     get_user_by_email,
 )
 
-from fastapi import Cookie, HTTPException, status
-from backend.services.jwt_service import verify_access_token
+from backend.services.jwt_service import (
+    verify_access_token,
+)
 
 from backend.models.user import User
-import bcrypt
-
 
 
 def verify_password(
@@ -20,44 +28,95 @@ def verify_password(
         password_hash.encode("utf-8"),
     )
 
+
 def get_current_user(
-    access_token: str | None = Cookie(default=None)
+    access_token: str | None = Cookie(
+        default=None
+    ),
+    authorization: str | None = Header(
+        default=None
+    ),
 ):
-    if not access_token:
+
+    token = access_token
+
+    # --------------------------------------------------------
+    # PREFER BEARER TOKEN
+    # --------------------------------------------------------
+
+    if authorization:
+
+        if authorization.startswith(
+            "Bearer "
+        ):
+
+            token = authorization[
+                7:
+            ]
+
+    # --------------------------------------------------------
+    # NO TOKEN
+    # --------------------------------------------------------
+
+    if not token:
+
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Not authenticated"
+            detail="Not authenticated",
         )
 
-    try:
-        payload = verify_access_token(access_token)
+    # --------------------------------------------------------
+    # VERIFY TOKEN
+    # --------------------------------------------------------
 
-        user_id = int(payload["sub"])
+    try:
+
+        payload = verify_access_token(
+            token
+        )
+
+        user_id = int(
+            payload["sub"]
+        )
 
         return user_id
 
-    except (ValueError, KeyError):
+    except (
+        ValueError,
+        KeyError,
+        TypeError,
+    ):
+
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid or expired token"
+            detail="Invalid or expired token",
         )
+
 
 def authenticate_user(
     email: str,
     password: str,
-) -> User:
+) -> User | None:
 
-    email = email.strip().lower()
+    email = (
+        email
+        .strip()
+        .lower()
+    )
 
-    user = get_user_by_email(email)
+    user = get_user_by_email(
+        email
+    )
 
     if not user:
+
         return None
 
     if not verify_password(
         password,
         user.password_hash,
     ):
+
         return None
 
     return user

@@ -5,6 +5,8 @@ from fastapi import (
     Response,
 )
 
+from pydantic import BaseModel
+
 from backend.services.auth_service import (
     authenticate_user,
     get_current_user,
@@ -23,6 +25,8 @@ from backend.schemas.user import (
     UserResponse,
 )
 
+class LoginResponse(UserResponse):
+    access_token: str
 
 login_route = APIRouter(
     prefix="/devxp",
@@ -64,7 +68,7 @@ def get_me(
 
 @login_route.post(
     "/authenticate_user",
-    response_model=UserResponse,
+    response_model=LoginResponse,
 )
 def authenticate_user_route(
     userlogin: Login,
@@ -97,7 +101,12 @@ def authenticate_user_route(
         path="/",
     )
 
-    return user
+    user_data = UserResponse.model_validate(user)
+
+    return LoginResponse(
+        **user_data.model_dump(),
+        access_token=token,
+    )
 
 
 # ============================================================

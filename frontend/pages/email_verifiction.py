@@ -103,6 +103,6 @@ def render_email_verification():
             st.session_state["verification_email"] = None
 
             st.session_state["page"] = "onboarding"
-            st.query_params["page"] = "onbording"
+            st.query_params["page"] = "onboarding"
 
             st.rerun()

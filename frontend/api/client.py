@@ -1,6 +1,8 @@
 import os
 
 import requests
+import streamlit as st
+
 from dotenv import load_dotenv
 
 
@@ -27,9 +29,25 @@ def api_request(
         f"/{endpoint.lstrip('/')}"
     )
 
+    headers = kwargs.pop(
+        "headers",
+        {},
+    )
+
+    access_token = st.session_state.get(
+        "access_token"
+    )
+
+    if access_token:
+
+        headers["Authorization"] = (
+            f"Bearer {access_token}"
+        )
+
     response = session.request(
         method,
         url,
+        headers=headers,
         timeout=30,
         **kwargs,
     )

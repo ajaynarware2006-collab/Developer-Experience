@@ -127,7 +127,6 @@ def render_login():
                 type="primary",
                 use_container_width=True,
                 key="login_submit",
-                disabled=st.session_state["account_created"]
             ):
                 
 
@@ -149,12 +148,16 @@ def render_login():
 
                 try:
 
-                    st.session_state["account_created"] = True
-                    
                     user = authenticate_user_api(
                         email=email,
                         password=password,
                     )
+
+                    if user and user.get("access_token"):
+
+                        st.session_state["access_token"] = user[
+                            "access_token"
+                        ]
 
                     if user is None:
 

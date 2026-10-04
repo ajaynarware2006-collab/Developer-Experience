@@ -22,6 +22,7 @@ class UserResponse(BaseModel):
     id: int
     name: str
     email: EmailStr
+    email_verified: bool
 
     github_id: str | None = None
     github_username: str | None = None

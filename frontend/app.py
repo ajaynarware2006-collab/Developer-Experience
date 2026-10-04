@@ -16,6 +16,7 @@ from frontend.pages.features import render_features
 from frontend.pages.how_it_work import render_how_it_works
 from frontend.pages.about import render_about
 
+
 # ============================================================
 # PAGE CONFIG
 # ============================================================
@@ -33,7 +34,10 @@ st.set_page_config(
 # ============================================================
 
 if "page" not in st.session_state:
-    st.session_state["page"] = get_current_page()
+
+    st.session_state["page"] = (
+        get_current_page()
+    )
 
 
 if "is_authenticated" not in st.session_state:
@@ -44,7 +48,63 @@ if "is_authenticated" not in st.session_state:
 
 
 # ============================================================
-# AUTHENTICATION
+# OAUTH CALLBACK
+# ============================================================
+
+auth_token = st.query_params.get(
+    "auth_token"
+)
+
+oauth_page = st.query_params.get(
+    "page"
+)
+
+
+if (
+    auth_token
+    and oauth_page == "dashboard"
+):
+
+    # Store token in Streamlit session.
+    st.session_state[
+        "access_token"
+    ] = auth_token
+
+    st.session_state[
+        "is_authenticated"
+    ] = True
+
+    st.session_state[
+        "page"
+    ] = "dashboard"
+
+    # Remove token from browser URL.
+    st.query_params.clear()
+
+    st.query_params["page"] = "dashboard"
+
+    st.rerun()
+
+
+# ============================================================
+# PAGE FROM QUERY PARAM
+# ============================================================
+
+if "page" in st.query_params:
+
+    requested_page = st.query_params.get(
+        "page"
+    )
+
+    if requested_page:
+
+        st.session_state[
+            "page"
+        ] = requested_page
+
+
+# ============================================================
+# PROTECTED PAGES
 # ============================================================
 
 PROTECTED_PAGES = {
@@ -58,10 +118,16 @@ PROTECTED_PAGES = {
 if (
     st.session_state["page"]
     in PROTECTED_PAGES
-    and not st.session_state["is_authenticated"]
+    and not st.session_state[
+        "is_authenticated"
+    ]
 ):
 
-    st.session_state["page"] = "login"
+    st.session_state[
+        "page"
+    ] = "login"
+
+    st.query_params["page"] = "login"
 
     st.rerun()
 
@@ -93,13 +159,17 @@ pages = {
 
     "dashboard": render_dashboard,
 
-    "email_verification": render_email_verification,
+    "email_verification":
+        render_email_verification,
 
-    "features" : render_features ,
+    "features":
+        render_features,
 
-    "how_it_work" : render_how_it_works ,
+    "how_it_work":
+        render_how_it_works,
 
-    "about" : render_about
+    "about":
+        render_about,
 }
 
 
